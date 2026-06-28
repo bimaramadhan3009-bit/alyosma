@@ -1,0 +1,1893 @@
+﻿<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ALYOSMA | Ambalan Yos Sudarso & Malahayati</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Lato:wght@400;700;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --coklat: #3D1A0A;
+      --emas: #C9922A;
+      --emas-lt: #E8B84B;
+      --krem: #F7F0E6;
+      --hijau: #2D5016;
+      --putih: #FFFFFF;
+      --teks: #1A0A03;
+    }
+    html { scroll-behavior: smooth; overflow-x: hidden; }
+    body { font-family: 'Lato', sans-serif; background-color: var(--krem); color: var(--teks); line-height: 1.7; overflow-x: hidden; }
+
+    /* ── REVEAL ANIMATION ── */
+    /* Konten terlihat dulu secara default; animasi aktif setelah JS siap */
+    .reveal { opacity: 1; transform: translateY(0); transition: opacity 0.6s ease, transform 0.6s ease; }
+    body.js-ready .reveal { opacity: 0; transform: translateY(28px); }
+    body.js-ready .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 40px;
+      background: rgba(61,26,10,0.95);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid rgba(201,146,42,0.3);
+    }
+    .nav-brand { display: flex; align-items: center; }
+    .nav-logo-link { display: flex; align-items: center; gap: 12px; text-decoration: none; color: var(--emas); }
+    .nav-logo-img { width: 44px; height: 44px; border-radius: 50%; object-fit: cover; border: 2px solid rgba(201,146,42,0.45); background: var(--krem); box-shadow: 0 0 0 2px rgba(201,146,42,0.15); }
+    .nav-logo-text { display: flex; flex-direction: column; line-height: 1.1; }
+    .nav-logo-title { font-family: 'Cinzel', serif; font-size: 1rem; letter-spacing: 2px; font-weight: 700; }
+    .nav-logo-sub { font-size: 0.6rem; letter-spacing: 1.2px; text-transform: uppercase; color: rgba(247,240,230,0.75); margin-top: 3px; }
+    .nav-links { display: flex; gap: 24px; align-items: center; }
+    .nav-links a { color: var(--krem); text-decoration: none; font-size: 0.82rem; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; transition: color 0.2s; }
+    .nav-links a:hover { color: var(--emas-lt); }
+    .nav-social { display: flex; gap: 12px; margin-left: 8px; }
+    .nav-social a { display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 50%; border: 1px solid rgba(201,146,42,0.4); color: var(--emas); transition: background 0.2s, border-color 0.2s; }
+    .nav-social a:hover { background: rgba(201,146,42,0.2); border-color: var(--emas); }
+    .nav-social svg { width: 15px; height: 15px; }
+
+    /* ── HERO ── */
+    .hero { position: relative; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; overflow: hidden; }
+
+    /* ── BANNER SLIDER ── */
+    .hero-banner { position: absolute; inset: 0; overflow: hidden; }
+    .hero-slide {
+      position: absolute; inset: 0;
+      background-size: cover; background-position: center; background-repeat: no-repeat;
+      opacity: 0;
+      transform: translateX(100%);
+      transition: transform 0.9s cubic-bezier(0.77, 0, 0.175, 1), opacity 0.9s ease;
+      will-change: transform, opacity;
+    }
+    .hero-slide::after {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(to bottom,
+        rgba(10,4,0,0.55) 0%,
+        rgba(30,12,2,0.7) 50%,
+        rgba(10,4,0,0.85) 100%);
+    }
+    .hero-slide::before {
+      content: ''; position: absolute; inset: 0; z-index: 1;
+      background-image:
+        repeating-linear-gradient(60deg, transparent, transparent 60px, rgba(201,146,42,0.04) 60px, rgba(201,146,42,0.04) 61px),
+        repeating-linear-gradient(-60deg, transparent, transparent 60px, rgba(201,146,42,0.04) 60px, rgba(201,146,42,0.04) 61px);
+    }
+    .hero-slide.active { opacity: 1; transform: translateX(0%); }
+    .hero-slide.exit   { opacity: 0; transform: translateX(-110%); }
+
+    /* Slide dot indicators */
+    .slider-dots {
+      position: absolute; bottom: 70px; left: 50%; transform: translateX(-50%);
+      display: flex; gap: 8px; z-index: 4;
+    }
+    .slider-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: rgba(247,240,230,0.35);
+      border: 1px solid rgba(201,146,42,0.4);
+      cursor: pointer; transition: background 0.3s, transform 0.3s;
+    }
+    .slider-dot.active { background: var(--emas); transform: scale(1.3); }
+
+    .hero-glow { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 500px; height: 500px; background: radial-gradient(circle, rgba(201,146,42,0.16) 0%, transparent 70%); border-radius: 50%; z-index: 2; animation: pulse 4s ease-in-out infinite; }
+    @keyframes pulse { 0%,100% { transform: translate(-50%,-50%) scale(1); opacity: 1; } 50% { transform: translate(-50%,-50%) scale(1.2); opacity: 0.6; } }
+
+    .hero-content { position: relative; z-index: 3; display: flex; flex-direction: column; align-items: center; padding: 120px 24px 80px; }
+    .profile-wrap { position: relative; width: 130px; height: 130px; margin-bottom: 28px; }
+    .profile-ring { position: absolute; inset: -5px; border-radius: 50%; background: conic-gradient(var(--emas), var(--emas-lt), var(--emas)); animation: spin 8s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .profile-img { position: relative; z-index: 1; width: 130px; height: 130px; border-radius: 50%; overflow: hidden; border: 4px solid var(--coklat); display: flex; align-items: center; justify-content: center; background-color: #eee; }
+    .profile-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .hero-badge { font-size: 0.72rem; font-weight: 700; letter-spacing: 4px; text-transform: uppercase; color: var(--emas); border: 1px solid rgba(201,146,42,0.45); padding: 5px 16px; border-radius: 2px; margin-bottom: 20px; }
+    .hero h1 { font-family: 'Cinzel', serif; font-size: clamp(3.5rem, 11vw, 8.5rem); font-weight: 900; color: var(--putih); letter-spacing: 8px; line-height: 1; text-shadow: 0 0 60px rgba(201,146,42,0.5), 0 4px 20px rgba(0,0,0,0.6); }
+    .hero h1 span { color: var(--emas); }
+    .hero-sub { font-family: 'Cinzel', serif; font-size: clamp(0.85rem, 2vw, 1.1rem); color: rgba(247,240,230,0.8); letter-spacing: 2px; margin-top: 16px; }
+    .hero-desc { font-size: 0.9rem; color: rgba(247,240,230,0.55); margin-top: 8px; }
+    .hero-divider { width: 80px; height: 2px; background: linear-gradient(90deg, transparent, var(--emas), transparent); margin: 24px auto; }
+    .hero-quote { font-style: italic; font-size: 0.97rem; color: rgba(247,240,230,0.7); max-width: 400px; }
+    .hero-social { display: flex; gap: 14px; margin-top: 28px; flex-wrap: wrap; justify-content: center; }
+    .hero-social a { display: flex; align-items: center; gap: 8px; padding: 10px 22px; border-radius: 2px; font-size: 0.8rem; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; text-decoration: none; transition: all 0.25s; }
+    .hero-social a svg { width: 16px; height: 16px; flex-shrink: 0; }
+    .btn-ig { background: linear-gradient(135deg, #833ab4, #fd1d1d, #fcb045); color: white; }
+    .btn-ig:hover { opacity: 0.85; transform: translateY(-2px); }
+    .btn-tt { background: #010101; color: white; border: 1px solid rgba(255,255,255,0.15); }
+    .btn-tt:hover { background: #1a1a1a; transform: translateY(-2px); }
+    .scroll-hint { position: absolute; bottom: 28px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 6px; color: rgba(247,240,230,0.35); font-size: 0.7rem; letter-spacing: 2px; text-transform: uppercase; z-index: 3; animation: bounce 2s ease-in-out infinite; }
+    .scroll-hint svg { width: 18px; opacity: 0.4; }
+    @keyframes bounce { 0%,100% { transform: translateX(-50%) translateY(0); } 50% { transform: translateX(-50%) translateY(6px); } }
+
+    /* ── SEJARAH ── */
+    .sejarah-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center; max-width: 900px; margin: 0 auto; padding: 80px 24px; }
+    .section-eyebrow { font-size: 0.72rem; font-weight: 700; letter-spacing: 4px; text-transform: uppercase; color: var(--emas); margin-bottom: 14px; }
+    .sejarah-text h2 { font-family: 'Cinzel', serif; font-size: clamp(1.6rem, 4vw, 2.4rem); font-weight: 700; color: var(--coklat); line-height: 1.2; margin-bottom: 20px; }
+    .divider { width: 56px; height: 3px; background: var(--emas); margin-bottom: 24px; border-radius: 2px; }
+    .sejarah-text p { font-size: 1.02rem; color: #4A2C10; }
+    .date-block { background: var(--coklat); color: var(--emas); font-family: 'Cinzel', serif; text-align: center; padding: 36px 28px; border-radius: 4px; box-shadow: 0 20px 60px rgba(61,26,10,0.25); }
+    .date-block .day { font-size: 4rem; font-weight: 900; line-height: 1; }
+    .date-block .month { font-size: 1.05rem; letter-spacing: 3px; margin-top: 6px; }
+    .date-block .year { font-size: 2rem; font-weight: 700; color: rgba(201,146,42,0.55); margin-top: 4px; }
+    .sejarah-visual { position: relative; }
+    .date-label { position: absolute; bottom: -18px; right: -18px; background: var(--emas); color: var(--coklat); font-size: 0.72rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; padding: 8px 16px; border-radius: 2px; }
+
+    /* ── ALASAN ── */
+    #alasan { background: var(--coklat); }
+    .alasan-wrap { max-width: 900px; margin: 0 auto; padding: 80px 24px; }
+    .alasan-wrap h2 { font-family: 'Cinzel', serif; font-size: clamp(1.6rem, 4vw, 2.4rem); font-weight: 700; color: var(--putih); line-height: 1.2; margin-bottom: 10px; }
+    .alasan-wrap .section-eyebrow { color: rgba(201,146,42,0.7); }
+    .reason-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 18px; margin-top: 36px; }
+    .reason-card { background: rgba(255,255,255,0.05); border: 1px solid rgba(201,146,42,0.2); border-radius: 4px; padding: 26px 22px; transition: background 0.25s, border-color 0.25s, transform 0.25s; }
+    .reason-card:hover { background: rgba(201,146,42,0.1); border-color: rgba(201,146,42,0.5); transform: translateY(-4px); }
+    .reason-num { font-family: 'Cinzel', serif; font-size: 2.5rem; font-weight: 900; color: rgba(201,146,42,0.22); line-height: 1; margin-bottom: 12px; }
+    .reason-card p { color: rgba(247,240,230,0.85); font-size: 0.95rem; }
+
+    /* ── FILOSOFI ── */
+    #filosofi { background: var(--krem); padding: 80px 24px; }
+    .filosofi-inner { max-width: 900px; margin: 0 auto; }
+    .filosofi-inner h2 { font-family: 'Cinzel', serif; font-size: clamp(1.6rem, 4vw, 2.4rem); font-weight: 700; color: var(--coklat); line-height: 1.2; margin-bottom: 36px; }
+    .filosofi-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+    .hero-card { position: relative; padding: 34px 26px; border-radius: 4px; overflow: hidden; }
+    .hero-card.yos { background: linear-gradient(135deg, #3D1A0A, #6B2D0E); }
+    .hero-card.malahayati { background: linear-gradient(135deg, #2D5016, #1A3009); }
+    .hero-card::before { content: ''; position: absolute; top: -30px; right: -30px; width: 120px; height: 120px; border-radius: 50%; background: rgba(255,255,255,0.05); }
+    .hero-card-label { font-size: 0.68rem; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; opacity: 0.55; color: var(--krem); margin-bottom: 10px; }
+    .hero-card h3 { font-family: 'Cinzel', serif; font-size: 1.45rem; font-weight: 700; margin-bottom: 14px; color: var(--emas-lt); }
+    .hero-card p { font-size: 0.95rem; color: rgba(247,240,230,0.83); line-height: 1.8; }
+    .hero-card .icon { font-size: 2.4rem; margin-bottom: 12px; }
+
+    /* ── NILAI ── */
+    #nilai { background: #1A0800; }
+    .nilai-wrap { max-width: 900px; margin: 0 auto; padding: 80px 24px; }
+    .nilai-wrap h2 { font-family: 'Cinzel', serif; font-size: clamp(1.6rem, 4vw, 2.4rem); font-weight: 700; color: var(--putih); line-height: 1.2; margin-bottom: 36px; }
+    .nilai-wrap .section-eyebrow { color: rgba(201,146,42,0.65); }
+    .nilai-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    .nilai-item { text-align: center; padding: 26px 14px; border-top: 2px solid rgba(201,146,42,0.28); transition: border-color 0.25s; }
+    .nilai-item:hover { border-color: var(--emas); }
+    .nilai-item .nilai-icon { font-size: 2rem; margin-bottom: 10px; }
+    .nilai-item h4 { font-family: 'Cinzel', serif; font-size: 0.95rem; color: var(--emas); letter-spacing: 1px; }
+    .nilai-item p { font-size: 0.78rem; color: rgba(247,240,230,0.45); margin-top: 5px; }
+
+    /* ── GALERI ── */
+    #galeri { background: var(--krem); padding: 80px 24px; }
+    .galeri-inner { max-width: 960px; margin: 0 auto; }
+    .galeri-inner h2 { font-family: 'Cinzel', serif; font-size: clamp(1.6rem, 4vw, 2.4rem); font-weight: 700; color: var(--coklat); line-height: 1.2; margin-bottom: 10px; }
+    .galeri-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 32px; }
+    .galeri-item { position: relative; border-radius: 4px; overflow: hidden; aspect-ratio: 4/3; cursor: pointer; background: #c9b89a; }
+    .galeri-item.featured { grid-column: span 2; aspect-ratio: 16/9; }
+    .galeri-item.wide { grid-column: span 2; aspect-ratio: 16/7; }
+    .galeri-item img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.4s ease; }
+    .galeri-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(61,26,10,0.88) 0%, transparent 55%); opacity: 0; transition: opacity 0.3s ease; display: flex; align-items: flex-end; padding: 14px; }
+    .galeri-caption { color: var(--putih); font-size: 0.8rem; font-weight: 700; letter-spacing: 0.5px; transform: translateY(6px); transition: transform 0.3s ease; }
+    .galeri-item:hover img { transform: scale(1.05); }
+    .galeri-item:hover .galeri-overlay { opacity: 1; }
+    .galeri-item:hover .galeri-caption { transform: translateY(0); }
+
+    /* ── LIGHTBOX ── */
+    .lightbox { display: none; position: fixed; inset: 0; z-index: 200; background: rgba(8,3,0,0.93); align-items: center; justify-content: center; flex-direction: column; padding: 20px; }
+    .lightbox.active { display: flex; }
+    .lightbox img { max-width: 90vw; max-height: 78vh; border-radius: 4px; object-fit: contain; box-shadow: 0 20px 80px rgba(0,0,0,0.6); }
+    .lightbox-caption { color: rgba(247,240,230,0.75); font-size: 0.87rem; margin-top: 14px; letter-spacing: 0.5px; }
+    .lightbox-counter { color: rgba(247,240,230,0.35); font-size: 0.75rem; margin-top: 6px; letter-spacing: 2px; }
+    .lightbox-close { position: absolute; top: 18px; right: 24px; color: rgba(247,240,230,0.55); font-size: 1.8rem; cursor: pointer; line-height: 1; background: none; border: none; transition: color 0.2s; }
+    .lightbox-close:hover { color: var(--emas); }
+    .lightbox-nav { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(61,26,10,0.55); border: 1px solid rgba(201,146,42,0.3); color: var(--emas); font-size: 1.3rem; width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: background 0.2s; }
+    .lightbox-nav:hover { background: rgba(201,146,42,0.28); }
+    .lightbox-nav.prev { left: 14px; }
+    .lightbox-nav.next { right: 14px; }
+
+    /* ── SOSIAL ALYOSMA ── */
+    #sosial { background: var(--coklat); padding: 70px 24px; text-align: center; }
+    .sosial-inner { max-width: 700px; margin: 0 auto; }
+    .sosial-inner h2 { font-family: 'Cinzel', serif; font-size: clamp(1.4rem, 3.5vw, 2rem); font-weight: 700; color: var(--putih); margin-bottom: 10px; }
+    .sosial-inner p { color: rgba(247,240,230,0.6); font-size: 0.95rem; margin-bottom: 32px; }
+    .sosial-inner .section-eyebrow { color: rgba(201,146,42,0.65); }
+    .sosial-cards { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+    .sosial-card { display: flex; align-items: center; gap: 14px; padding: 18px 28px; border-radius: 4px; text-decoration: none; min-width: 180px; transition: transform 0.25s, opacity 0.25s; }
+    .sosial-card:hover { transform: translateY(-4px); opacity: 0.9; }
+    .sosial-card.ig { background: linear-gradient(135deg, #6a11cb, #c13584, #f77737); color: white; }
+    .sosial-card.tt { background: #111; color: white; border: 1px solid rgba(255,255,255,0.1); }
+    .sosial-card svg { width: 28px; height: 28px; flex-shrink: 0; }
+    .sosial-card-info { text-align: left; }
+    .sosial-card-label { font-size: 0.68rem; letter-spacing: 2px; text-transform: uppercase; opacity: 0.7; }
+    .sosial-card-handle { font-weight: 700; font-size: 0.92rem; letter-spacing: 0.5px; }
+
+    /* ── SOSIAL SEKOLAH ── */
+    #sosial-sekolah { background: #1A0800; padding: 70px 24px; text-align: center; }
+    .sosial-sekolah-inner { max-width: 800px; margin: 0 auto; }
+    .sosial-sekolah-inner h2 { font-family: 'Cinzel', serif; font-size: clamp(1.4rem, 3.5vw, 2rem); font-weight: 700; color: var(--putih); margin-bottom: 10px; }
+    .sosial-sekolah-inner p { color: rgba(247,240,230,0.5); font-size: 0.92rem; margin-bottom: 32px; }
+    .sosial-sekolah-inner .section-eyebrow { color: rgba(201,146,42,0.55); }
+    .school-social-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 14px; }
+    .school-social-card { display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 22px 16px; border-radius: 6px; text-decoration: none; color: white; transition: transform 0.25s, opacity 0.25s; }
+    .school-social-card:hover { transform: translateY(-5px); opacity: 0.88; }
+    .school-social-card.yt  { background: linear-gradient(135deg, #b00000, #FF0000); }
+    .school-social-card.ig  { background: linear-gradient(135deg, #6a11cb, #c13584, #f77737); }
+    .school-social-card.tt  { background: #111; border: 1px solid rgba(255,255,255,0.12); }
+    .school-social-card.fb  { background: linear-gradient(135deg, #1877F2, #0a5ec9); }
+    .school-social-card svg { width: 32px; height: 32px; flex-shrink: 0; }
+    .school-social-card .sc-label { font-size: 0.65rem; letter-spacing: 2px; text-transform: uppercase; opacity: 0.65; }
+    .school-social-card .sc-name  { font-weight: 700; font-size: 0.88rem; letter-spacing: 0.3px; text-align: center; }
+
+    /* ── KONTAK ── */
+    .contact-section { background: var(--krem); padding: 80px 24px; }
+    .contact-box { max-width: 860px; margin: 0 auto; background: linear-gradient(135deg, #fffdf8 0%, #f4e8d2 100%); border: 1px solid rgba(61,26,10,0.1); border-radius: 12px; padding: 34px 28px; box-shadow: 0 18px 45px rgba(61,26,10,0.08); }
+    .contact-header { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 24px; margin-bottom: 18px; }
+    .contact-box h2 { font-family: 'Cinzel', serif; font-size: clamp(1.4rem, 3vw, 2rem); color: var(--coklat); margin-bottom: 10px; }
+    .contact-box p { color: #6c4a2e; margin-bottom: 18px; }
+    .school-logo-box { width: 132px; height: 132px; border-radius: 50%; background: linear-gradient(135deg, #fffdf8 0%, #f7ebcf 100%); border: 4px solid rgba(201,146,42,0.45); display: flex; align-items: center; justify-content: center; padding: 12px; box-shadow: 0 12px 28px rgba(61,26,10,0.14); flex-shrink: 0; align-self: center; overflow: hidden; }
+    .school-logo-box img { width: 100%; height: 100%; object-fit: cover; display: block; border-radius: 50%; }
+    .contact-list { display: grid; gap: 12px; }
+    .contact-item { display: flex; gap: 12px; align-items: flex-start; padding: 12px 0; border-top: 1px solid rgba(61,26,10,0.08); }
+    .contact-item:first-child { border-top: none; padding-top: 0; }
+    .contact-item strong { color: var(--coklat); min-width: 90px; display: inline-block; font-weight: 700; }
+    .contact-item a { color: var(--coklat); text-decoration: none; }
+    .contact-item a:hover { color: var(--emas); }
+
+    /* ── QUOTE ── */
+    .quote-banner { background: var(--emas); padding: 52px 24px; text-align: center; }
+    .quote-banner blockquote { font-family: 'Cinzel', serif; font-size: clamp(1.05rem, 3vw, 1.55rem); font-weight: 700; color: var(--coklat); max-width: 680px; margin: 0 auto; letter-spacing: 1px; line-height: 1.5; }
+    .quote-banner cite { display: block; font-family: 'Lato', sans-serif; font-size: 0.76rem; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: rgba(61,26,10,0.55); margin-top: 12px; font-style: normal; }
+
+    /* ── FOOTER ── */
+    footer { background: #1A0800; color: rgba(247,240,230,0.4); text-align: center; padding: 28px 24px; font-size: 0.8rem; letter-spacing: 1px; }
+    footer span { color: var(--emas); font-weight: 700; }
+    .footer-social { display: flex; gap: 14px; justify-content: center; margin-bottom: 14px; flex-wrap: wrap; }
+    .footer-social a { width: 34px; height: 34px; border-radius: 50%; border: 1px solid rgba(201,146,42,0.3); display: flex; align-items: center; justify-content: center; color: rgba(201,146,42,0.6); transition: all 0.2s; text-decoration: none; }
+    .footer-social a:hover { background: rgba(201,146,42,0.15); border-color: var(--emas); color: var(--emas); }
+    .footer-social svg { width: 16px; height: 16px; }
+    /* ════════════════════════════════════
+       RESPONSIVE — MOBILE & TABLET
+    ════════════════════════════════════ */
+
+    /* Tablet (max 768px) */
+    @media (max-width: 768px) {
+
+      /* NAV */
+      nav { padding: 12px 16px; }
+      .nav-links a { display: none; }
+      .nav-social { display: flex; margin-left: 0; }
+      .nav-links { gap: 10px; }
+
+      /* HERO */
+      .hero-content { padding: 100px 20px 80px; }
+      .hero h1 { letter-spacing: 4px; }
+      .hero-glow { width: 280px; height: 280px; }
+
+      /* SEJARAH — 1 kolom */
+      .sejarah-wrap { grid-template-columns: 1fr; gap: 32px; padding: 60px 20px 70px; text-align: center; }
+      .divider { margin: 0 auto 24px; }
+      .date-label { right: 50%; transform: translateX(50%); bottom: -20px; }
+      .sejarah-visual { padding-bottom: 32px; }
+
+      /* ALASAN */
+      .alasan-wrap { padding: 60px 20px; }
+      .reason-grid { grid-template-columns: 1fr; }
+
+      /* FILOSOFI — 1 kolom */
+      #filosofi { padding: 60px 20px; }
+      .filosofi-grid { grid-template-columns: 1fr; }
+
+      /* NILAI — 2 kolom */
+      .nilai-wrap { padding: 60px 20px; }
+      .nilai-grid { grid-template-columns: repeat(2, 1fr); }
+
+      /* GALERI — 1 kolom */
+      #galeri { padding: 60px 20px; }
+      .galeri-grid { grid-template-columns: 1fr; gap: 10px; }
+      .galeri-item.featured, .galeri-item.wide { grid-column: span 1; aspect-ratio: 4/3; }
+
+      /* SOSIAL */
+      #sosial { padding: 50px 20px; }
+      .sosial-cards { flex-direction: column; align-items: center; }
+      .sosial-card { width: 100%; max-width: 320px; justify-content: center; }
+
+      /* SOSIAL SEKOLAH */
+      #sosial-sekolah { padding: 50px 20px; }
+      .school-social-grid { grid-template-columns: repeat(2, 1fr); }
+
+      /* KONTAK */
+      .contact-section { padding: 60px 16px; }
+      .contact-box { padding: 24px 18px; }
+      .contact-header { grid-template-columns: 1fr; text-align: center; }
+      .school-logo-box { margin: 0 auto; }
+      .contact-item { flex-direction: column; gap: 4px; }
+      .contact-item strong { min-width: unset; }
+
+      /* QUOTE */
+      .quote-banner { padding: 40px 20px; }
+    }
+
+    /* HP kecil (max 480px) */
+    @media (max-width: 480px) {
+
+      /* NAV */
+      nav { padding: 10px 14px; }
+      .nav-logo-title { font-size: 0.88rem; letter-spacing: 1px; }
+      .nav-logo-sub { display: none; }
+
+      /* HERO */
+      .hero-content { padding: 90px 16px 70px; }
+      .hero-badge { font-size: 0.62rem; letter-spacing: 2px; padding: 4px 12px; }
+      .hero h1 { letter-spacing: 3px; }
+      .hero-sub { font-size: 0.8rem; letter-spacing: 1px; }
+      .profile-wrap { width: 100px; height: 100px; margin-bottom: 20px; }
+      .profile-img { width: 100px; height: 100px; }
+      .hero-social { flex-direction: column; align-items: center; gap: 10px; width: 100%; }
+      .hero-social a { justify-content: center; width: 100%; max-width: 240px; }
+
+      /* NILAI */
+      .nilai-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+      .nilai-item { padding: 18px 10px; }
+
+      /* SOSIAL SEKOLAH */
+      .school-social-grid { grid-template-columns: 1fr 1fr; }
+      .school-social-card { padding: 16px 10px; }
+      .school-social-card .sc-name { font-size: 0.78rem; }
+
+      /* KONTAK */
+      .contact-box { padding: 20px 14px; border-radius: 8px; }
+      .school-logo-box { width: 90px; height: 90px; }
+    }
+
+
+    /* Logo SMK button */
+    #btn-sejarah-smk {
+      cursor: pointer; border: none; background: none; padding: 0;
+      transition: transform 0.25s, box-shadow 0.25s;
+    }
+    #btn-sejarah-smk:hover {
+      transform: scale(1.07);
+      box-shadow: 0 0 0 4px rgba(201,146,42,0.35), 0 12px 28px rgba(61,26,10,0.2);
+    }
+    #btn-sejarah-smk::after {
+      content: 'Lihat Sejarah';
+      position: absolute; bottom: -26px; left: 50%; transform: translateX(-50%);
+      font-size: 0.65rem; font-weight: 700; letter-spacing: 1px;
+      color: #C9922A; white-space: nowrap; opacity: 0;
+      transition: opacity 0.2s;
+    }
+    .contact-header { position: relative; }
+    #btn-sejarah-smk:hover::after { opacity: 1; }
+
+    /* Modal */
+    #modal-smk.open { display: flex !important; }
+    #modal-smk > div { animation: modalIn 0.35s cubic-bezier(0.34,1.56,0.64,1) both; }
+    @keyframes modalIn {
+      from { opacity: 0; transform: scale(0.88) translateY(20px); }
+      to   { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+
+    /* ════════════════════════════════════
+       STRUKTUR AMBALAN — FINGERPRINT TRIGGER
+    ════════════════════════════════════ */
+
+    /* Fingerprint trigger button */
+    .fingerprint-wrap {
+      display: flex; flex-direction: column; align-items: center;
+      gap: 12px; margin: 40px auto 0; cursor: pointer;
+    }
+    .fingerprint-btn {
+      width: 80px; height: 80px; border-radius: 50%;
+      background: linear-gradient(135deg, #3D1A0A, #6B2D0E);
+      border: 3px solid rgba(201,146,42,0.5);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; transition: all 0.3s; position: relative;
+      box-shadow: 0 8px 24px rgba(61,26,10,0.35);
+      animation: fp-pulse 2.5s ease-in-out infinite;
+    }
+    .fingerprint-btn svg { width: 38px; height: 38px; color: #E8B84B; }
+    .fingerprint-btn:hover { transform: scale(1.1); box-shadow: 0 0 0 8px rgba(201,146,42,0.18), 0 12px 32px rgba(61,26,10,0.4); }
+    @keyframes fp-pulse {
+      0%,100% { box-shadow: 0 8px 24px rgba(61,26,10,0.35), 0 0 0 0 rgba(201,146,42,0.3); }
+      50%      { box-shadow: 0 8px 24px rgba(61,26,10,0.35), 0 0 0 12px rgba(201,146,42,0); }
+    }
+    .fingerprint-label {
+      font-size: 0.7rem; font-weight: 700; letter-spacing: 3px;
+      text-transform: uppercase; color: rgba(247,240,230,0.5);
+    }
+
+    /* Modal Struktur Ambalan */
+    #modal-struktur {
+      display: none; position: fixed; inset: 0; z-index: 300;
+      background: rgba(8,3,0,0.92); backdrop-filter: blur(8px);
+      align-items: flex-start; justify-content: center;
+      padding: 20px; overflow-y: auto;
+    }
+    #modal-struktur.open { display: flex; }
+    .modal-struktur-box {
+      background: linear-gradient(160deg, #fffdf8 0%, #f4e8d2 100%);
+      border-radius: 16px; width: 100%; max-width: 700px;
+      box-shadow: 0 30px 80px rgba(0,0,0,0.5);
+      animation: modalIn 0.35s cubic-bezier(0.34,1.56,0.64,1) both;
+      margin: auto; overflow: hidden;
+    }
+    .modal-struktur-header {
+      background: linear-gradient(135deg, #3D1A0A, #6B2D0E);
+      padding: 28px 28px 24px; position: relative; text-align: center;
+    }
+    .modal-struktur-header h2 {
+      font-family: 'Cinzel', serif; font-size: 1.4rem; font-weight: 700;
+      color: #E8B84B; margin-bottom: 4px;
+    }
+    .modal-struktur-header p { font-size: 0.8rem; color: rgba(247,240,230,0.55); }
+    .modal-struktur-close {
+      position: absolute; top: 14px; right: 14px;
+      background: rgba(255,255,255,0.1); border: none; border-radius: 50%;
+      width: 34px; height: 34px; color: rgba(247,240,230,0.7);
+      font-size: 1.1rem; cursor: pointer; display: flex;
+      align-items: center; justify-content: center;
+    }
+    .modal-struktur-body { padding: 32px 24px 36px; }
+
+    /* Struktur tree */
+    .struktur-tree { display: flex; flex-direction: column; align-items: center; gap: 0; }
+
+    /* Connector line */
+    .struktur-line {
+      width: 2px; height: 28px;
+      background: linear-gradient(to bottom, rgba(201,146,42,0.6), rgba(201,146,42,0.2));
+      margin: 0 auto;
+    }
+    .struktur-line-split {
+      width: 60%; height: 2px;
+      background: linear-gradient(90deg, transparent, rgba(201,146,42,0.5), transparent);
+      margin: 0 auto; position: relative;
+    }
+    .struktur-line-split::before,
+    .struktur-line-split::after {
+      content: ''; position: absolute; top: 0;
+      width: 2px; height: 24px;
+      background: rgba(201,146,42,0.4);
+    }
+    .struktur-line-split::before { left: 0; }
+    .struktur-line-split::after { right: 0; }
+
+    /* Row: single card (pembina) */
+    .struktur-row-single { display: flex; justify-content: center; width: 100%; }
+
+    /* Row: pair card */
+    .struktur-row-pair {
+      display: flex; gap: 16px; justify-content: center; width: 100%;
+    }
+
+    /* Jabatan label above pair */
+    .struktur-jabatan-label {
+      text-align: center; font-size: 0.65rem; font-weight: 700;
+      letter-spacing: 3px; text-transform: uppercase;
+      color: #C9922A; margin-bottom: 6px;
+    }
+
+    /* Card anggota */
+    .struktur-card {
+      background: #fff; border-radius: 10px;
+      border: 1px solid rgba(201,146,42,0.25);
+      padding: 14px 12px; text-align: center;
+      width: 140px; flex-shrink: 0;
+      box-shadow: 0 4px 14px rgba(61,26,10,0.08);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .struktur-card:hover { transform: translateY(-3px); box-shadow: 0 8px 22px rgba(61,26,10,0.15); }
+    .struktur-card.pembina { width: 160px; border-color: rgba(201,146,42,0.5); background: linear-gradient(135deg,#fffdf8,#f7ebcf); }
+    .struktur-photo {
+      width: 64px; height: 64px; border-radius: 50%; margin: 0 auto 10px;
+      object-fit: cover; border: 2px solid rgba(201,146,42,0.4);
+      background: linear-gradient(135deg, #c9b89a, #a8896a);
+      display: flex; align-items: center; justify-content: center;
+      overflow: hidden;
+    }
+    .struktur-photo img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+    .struktur-photo .photo-placeholder {
+      font-size: 1.6rem; opacity: 0.4;
+    }
+    .struktur-card .jabatan {
+      font-size: 0.6rem; font-weight: 700; letter-spacing: 2px;
+      text-transform: uppercase; color: #C9922A; margin-bottom: 4px;
+    }
+    .struktur-card .nama {
+      font-family: 'Cinzel', serif; font-size: 0.82rem; font-weight: 700;
+      color: #3D1A0A; line-height: 1.3;
+    }
+    .struktur-card .gender-tag {
+      display: inline-block; font-size: 0.58rem; font-weight: 700;
+      letter-spacing: 1px; text-transform: uppercase; padding: 2px 8px;
+      border-radius: 20px; margin-top: 6px;
+    }
+    .gender-tag.putra { background: rgba(24,119,242,0.12); color: #1877F2; }
+    .gender-tag.putri { background: rgba(195,53,132,0.12); color: #c13584; }
+    .gender-tag.pembina-tag { background: rgba(201,146,42,0.15); color: #8a6000; }
+
+    /* QR Section */
+    .qr-section {
+      background: var(--coklat); padding: 70px 24px; text-align: center;
+    }
+    .qr-inner { max-width: 480px; margin: 0 auto; }
+    .qr-inner h2 {
+      font-family: 'Cinzel', serif; font-size: clamp(1.3rem,3.5vw,1.8rem);
+      font-weight: 700; color: var(--putih); margin-bottom: 10px;
+    }
+    .qr-inner p { color: rgba(247,240,230,0.55); font-size: 0.9rem; margin-bottom: 28px; }
+    .qr-box {
+      background: #fff; border-radius: 12px; padding: 20px;
+      display: inline-flex; flex-direction: column; align-items: center; gap: 14px;
+      box-shadow: 0 16px 48px rgba(0,0,0,0.35);
+    }
+    .qr-box canvas { border-radius: 6px; }
+    .qr-box-label {
+      font-size: 0.72rem; font-weight: 700; letter-spacing: 2px;
+      text-transform: uppercase; color: #3D1A0A; opacity: 0.5;
+    }
+    .qr-download-btn {
+      margin-top: 20px; padding: 12px 28px;
+      background: linear-gradient(135deg, #C9922A, #E8B84B);
+      color: #3D1A0A; font-family: 'Cinzel', serif; font-size: 0.8rem;
+      font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
+      border: none; border-radius: 4px; cursor: pointer; transition: opacity 0.2s;
+      text-decoration: none; display: inline-block;
+    }
+    .qr-download-btn:hover { opacity: 0.85; }
+
+    @media (max-width: 600px) {
+      .struktur-card { width: 120px; padding: 12px 8px; }
+      .struktur-card.pembina { width: 140px; }
+      .struktur-photo { width: 54px; height: 54px; }
+      .struktur-card .nama { font-size: 0.75rem; }
+      .struktur-row-pair { gap: 10px; }
+    }
+
+
+    /* ── ANGGOTA BIASA (foto bareng) ── */
+    .anggota-biasa-wrap {
+      width: 100%; margin-top: 8px;
+    }
+    .anggota-biasa-label {
+      text-align: center; font-size: 0.65rem; font-weight: 700;
+      letter-spacing: 3px; text-transform: uppercase;
+      color: #C9922A; margin-bottom: 10px;
+    }
+    .anggota-biasa-foto {
+      width: 100%; border-radius: 10px; overflow: hidden;
+      border: 2px solid rgba(201,146,42,0.3);
+      background: linear-gradient(135deg, #2a1200, #1a0900);
+      min-height: 160px; display: flex; align-items: center;
+      justify-content: center; position: relative; cursor: pointer;
+      transition: border-color 0.2s;
+    }
+    .anggota-biasa-foto:hover { border-color: rgba(201,146,42,0.6); }
+    .anggota-biasa-foto img {
+      width: 100%; height: 100%; object-fit: cover; display: block;
+      border-radius: 8px;
+    }
+    .anggota-biasa-placeholder {
+      display: flex; flex-direction: column; align-items: center;
+      gap: 8px; color: rgba(201,146,42,0.3); padding: 30px;
+      text-align: center;
+    }
+    .anggota-biasa-placeholder svg { width: 40px; opacity: 0.3; }
+    .anggota-biasa-placeholder span {
+      font-size: 0.72rem; letter-spacing: 1px; text-transform: uppercase;
+    }
+    .anggota-biasa-upload {
+      margin-top: 10px; width: 100%; padding: 10px;
+      background: rgba(201,146,42,0.1); border: 1px dashed rgba(201,146,42,0.3);
+      border-radius: 6px; color: rgba(247,240,230,0.5);
+      font-size: 0.72rem; letter-spacing: 1px; text-transform: uppercase;
+      text-align: center; cursor: pointer; transition: all 0.2s;
+    }
+    .anggota-biasa-upload:hover {
+      background: rgba(201,146,42,0.2); border-color: rgba(201,146,42,0.6);
+      color: var(--emas-lt);
+    }
+    #input-foto-anggota { display: none; }
+
+  </style>
+  </head>
+<body>
+
+  <!-- ══ NAV ══ -->
+  <nav>
+    <div class="nav-brand">
+      <a href="#" class="nav-logo-link" aria-label="ALYOSMA">
+        <img src="images/profil.jpg.jpeg" alt="Logo ALYOSMA" class="nav-logo-img" />
+        <span class="nav-logo-text">
+          <span class="nav-logo-title" id="site-brand">ALYOSMA</span>
+          <span class="nav-logo-sub">Ambalan Yos Sudarso</span>
+        </span>
+      </a>
+    </div>
+    <div class="nav-links">
+      <a href="#sejarah">Sejarah</a>
+      <a href="#alasan">Alasan</a>
+      <a href="#filosofi">Filosofi</a>
+      <a href="#nilai">Nilai</a>
+      <a href="#galeri">Galeri</a>
+      <a href="#kontak">Kontak</a>
+      <div class="nav-social">
+        <a href="https://www.instagram.com/scout_alyosma" target="_blank" title="Instagram ALYOSMA">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="0.5" fill="currentColor"/>
+          </svg>
+        </a>
+        <a href="https://www.tiktok.com/@scout_alyosma" target="_blank" title="TikTok ALYOSMA">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.27 6.27 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.69a8.18 8.18 0 0 0 4.78 1.52V6.75a4.85 4.85 0 0 1-1.01-.06z"/>
+          </svg>
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ══ HERO ══ -->
+  <section class="hero">
+    <!-- DUAL BANNER SLIDER -->
+    <div class="hero-banner">
+      <div class="hero-slide active" id="slide-0"></div>
+      <div class="hero-slide" id="slide-1"></div>
+    </div>
+
+    <!-- Dot indicators -->
+    <div class="slider-dots">
+      <div class="slider-dot active" data-slide="0"></div>
+      <div class="slider-dot" data-slide="1"></div>
+    </div>
+
+    <div class="hero-glow"></div>
+    <div class="hero-content">
+      <div class="profile-wrap">
+        <div class="profile-ring"></div>
+        <div class="profile-img">
+          <img src="images/profil_alyosma.jpg.jpeg" alt="Foto profil ALYOSMA" />
+        </div>
+      </div>
+      <div class="hero-badge" id="hero-badge">Pramuka Penegak · SMK YAPIN Bekasi</div>
+      <h1 id="hero-title">ALY<span>OS</span>MA</h1>
+      <p class="hero-sub" id="hero-subtitle">Ambalan Yos Sudarso &amp; Malahayati</p>
+      <p class="hero-desc" id="hero-desc">Dibentuk 14 Agustus 2024</p>
+      <div class="hero-divider"></div>
+      <p class="hero-quote" id="hero-quote">Berani, Teguh, dan Berdedikasi untuk Bangsa.</p>
+      <div class="hero-social">
+        <a href="https://www.instagram.com/scout_alyosma" target="_blank" class="btn-ig" data-social="instagram">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+            <rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="0.5" fill="currentColor"/>
+          </svg>
+          Instagram
+        </a>
+        <a href="https://www.tiktok.com/@scout_alyosma" target="_blank" class="btn-tt" data-social="tiktok">
+          <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
+            <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.27 6.27 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.69a8.18 8.18 0 0 0 4.78 1.52V6.75a4.85 4.85 0 0 1-1.01-.06z"/>
+          </svg>
+          TikTok
+        </a>
+      </div>
+    </div>
+    <div class="scroll-hint">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M12 5v14M5 12l7 7 7-7"/>
+      </svg>
+      Gulir ke bawah
+    </div>
+  </section>
+
+  <!-- ══ SEJARAH ══ -->
+  <div id="sejarah" style="background:var(--krem)">
+    <div class="sejarah-wrap">
+      <div class="sejarah-text reveal">
+        <p class="section-eyebrow">01 — Sejarah</p>
+        <h2>Awal Mula<br/>Ambalan</h2>
+        <div class="divider"></div>
+        <p>Ambalan Yos Sudarso dan Malahayati (ALYOSMA) resmi berdiri pada 14 Agustus 2024. Hadir sebagai wadah pembinaan karakter, kepemimpinan, dan pengabdian bagi peserta didik SMK YAPIN Bekasi, ambalan ini mewarisi semangat dua pahlawan besar nusantara.</p>
+      </div>
+      <div class="sejarah-visual reveal">
+        <div class="date-block">
+          <div class="day">14</div>
+          <div class="month">Agustus</div>
+          <div class="year">2024</div>
+        </div>
+        <div class="date-label">Hari Berdiri</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ ALASAN ══ -->
+  <div id="alasan">
+    <div class="alasan-wrap">
+      <p class="section-eyebrow reveal">02 — Alasan Terbentuk</p>
+      <h2 class="reveal">Mengapa ALYOSMA<br/>Didirikan?</h2>
+      <div class="reason-grid">
+        <div class="reason-card reveal"><div class="reason-num">01</div><p>Membentuk karakter anggota yang <strong style="color:var(--emas-lt)">disiplin</strong> dalam kehidupan sehari-hari.</p></div>
+        <div class="reason-card reveal"><div class="reason-num">02</div><p>Menumbuhkan <strong style="color:var(--emas-lt)">jiwa kepemimpinan</strong> yang bertanggung jawab.</p></div>
+        <div class="reason-card reveal"><div class="reason-num">03</div><p>Meningkatkan rasa <strong style="color:var(--emas-lt)">tanggung jawab</strong> terhadap diri, sesama, dan lingkungan.</p></div>
+        <div class="reason-card reveal"><div class="reason-num">04</div><p>Mempererat <strong style="color:var(--emas-lt)">persaudaraan</strong> yang tulus antaranggota.</p></div>
+        <div class="reason-card reveal"><div class="reason-num">05</div><p>Menjadi ruang <strong style="color:var(--emas-lt)">pengembangan diri</strong> yang nyata bagi siswa.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ FILOSOFI ══ -->
+  <div id="filosofi">
+    <div class="filosofi-inner">
+      <p class="section-eyebrow reveal">03 — Filosofi</p>
+      <h2 class="reveal">Makna di Balik Nama</h2>
+      <div class="filosofi-grid">
+        <div class="hero-card yos reveal">
+          <div class="icon">⚓</div>
+          <div class="hero-card-label">Pahlawan Nasional · Angkatan Laut</div>
+          <h3>Yos Sudarso</h3>
+          <p>Melambangkan <strong>keberanian</strong> sejati, semangat pengorbanan tanpa batas, dan tekad membara untuk membela tanah air hingga napas terakhir.</p>
+        </div>
+        <div class="hero-card malahayati reveal">
+          <div class="icon">⚔️</div>
+          <div class="hero-card-label">Pahlawan Nasional · Laksamana Perempuan</div>
+          <h3>Malahayati</h3>
+          <p>Melambangkan <strong>keteguhan hati</strong>, kecerdasan strategi, serta kepemimpinan visioner yang melampaui zamannya — inspirasi bagi seluruh anggota.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ NILAI ══ -->
+  <div id="nilai">
+    <div class="nilai-wrap">
+      <p class="section-eyebrow reveal">04 — Nilai-Nilai</p>
+      <h2 class="reveal">Pilar Ambalan</h2>
+      <div class="nilai-grid">
+        <div class="nilai-item reveal"><div class="nilai-icon">🎯</div><h4>Disiplin</h4><p>Taat pada aturan &amp; waktu</p></div>
+        <div class="nilai-item reveal"><div class="nilai-icon">🤝</div><h4>Tanggung Jawab</h4><p>Berani memikul amanah</p></div>
+        <div class="nilai-item reveal"><div class="nilai-icon">👑</div><h4>Kepemimpinan</h4><p>Memimpin dengan teladan</p></div>
+        <div class="nilai-item reveal"><div class="nilai-icon">🌿</div><h4>Persaudaraan</h4><p>Solid &amp; saling mendukung</p></div>
+        <div class="nilai-item reveal"><div class="nilai-icon">⚖️</div><h4>Integritas</h4><p>Jujur dalam setiap langkah</p></div>
+        <div class="nilai-item reveal"><div class="nilai-icon">🌺</div><h4>Pengabdian</h4><p>Berbakti untuk masyarakat</p></div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ══ STRUKTUR AMBALAN — FINGERPRINT TRIGGER ══ -->
+  <div id="struktur-trigger" style="background: #1A0800; padding: 60px 24px; text-align:center;">
+    <p class="section-eyebrow reveal" style="color:rgba(201,146,42,0.65);">05 — Struktur Ambalan</p>
+    <h2 class="reveal" style="font-family:'Cinzel',serif;font-size:clamp(1.6rem,4vw,2.4rem);font-weight:700;color:var(--putih);margin-bottom:10px;">Pengurus ALYOSMA</h2>
+    <p class="reveal" style="color:rgba(247,240,230,0.45);font-size:0.9rem;margin-bottom:0;">Tekan tombol di bawah untuk melihat struktur kepengurusan</p>
+    <div class="fingerprint-wrap reveal" id="btn-open-struktur">
+      <div class="fingerprint-btn">
+        <!-- Fingerprint SVG icon -->
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 1C7.03 1 3 5.03 3 10c0 3.87 2.34 7.19 5.69 8.7"/>
+          <path d="M12 1c4.97 0 9 4.03 9 9 0 3.87-2.34 7.19-5.69 8.7"/>
+          <path d="M12 5c-2.76 0-5 2.24-5 5 0 2.12.83 4.04 2.18 5.47"/>
+          <path d="M12 5c2.76 0 5 2.24 5 5 0 2.12-.83 4.04-2.18 5.47"/>
+          <path d="M12 9c-.55 0-1 .45-1 1 0 .9.18 1.76.5 2.54"/>
+          <path d="M12 9c.55 0 1 .45 1 1 0 .9-.18 1.76-.5 2.54"/>
+          <circle cx="12" cy="10" r="1" fill="currentColor"/>
+        </svg>
+      </div>
+      <span class="fingerprint-label">Scan untuk melihat struktur</span>
+    </div>
+  </div>
+
+  <!-- ══ GALERI ══ -->
+  <div id="galeri">
+    <div class="galeri-inner">
+      <p class="section-eyebrow reveal">06 — Galeri</p>
+      <h2 class="reveal">Foto Kegiatan</h2>
+      <p class="reveal" style="color:#7A4A20; font-size:0.9rem; margin-top:4px;">Klik foto untuk memperbesar</p>
+      <div class="galeri-grid">
+        <div class="galeri-item featured reveal" data-index="0">
+          <img src="images/kegiatan_pelantikan.jpg.jpeg" alt="Pelantikan ALYOSMA" />
+          <div class="galeri-overlay"><div class="galeri-caption">Pelantikan BANTARA — Februari 2025</div></div>
+        </div>
+        <div class="galeri-item reveal" data-index="1">
+          <img src="images/kegiatan_pertemuan.jpg.jpeg" alt="Latihan Rutin ALYOSMA" />
+          <div class="galeri-overlay"><div class="galeri-caption">Latihan Rutin</div></div>
+        </div>
+        <div class="galeri-item reveal" data-index="2">
+          <img src="images/kegiatan_kemah.jpg.jpeg" alt="Perkemahan ALYOSMA" />
+          <div class="galeri-overlay"><div class="galeri-caption">Perkemahan</div></div>
+        </div>
+        <div class="galeri-item reveal" data-index="3">
+          <img src="images/kegiatan_bakti_sosial.jpg.jpeg" alt="Bakti Sosial ALYOSMA" />
+          <div class="galeri-overlay"><div class="galeri-caption">Tapak Merah</div></div>
+        </div>
+        <div class="galeri-item reveal" data-index="4">
+          <img src="images/kegiatan_pramuka_garuda.jpg.jpeg" alt="HUT Pramuka ALYOSMA" />
+          <div class="galeri-overlay"><div class="galeri-caption">Pramuka Garuda</div></div>
+        </div>
+        <div class="galeri-item wide reveal" data-index="5">
+          <img src="images/kegiatan_foto_bersama.jpg.jpeg" alt="Foto Bersama Seluruh Anggota ALYOSMA" />
+          <div class="galeri-overlay"><div class="galeri-caption">Foto Bersama Seluruh Anggota ALYOSMA</div></div>
+        </div>
+        <div class="galeri-item reveal" data-index="6">
+          <img src="images/kegiatan_alam.jpg.jpeg" alt="Kegiatan Alam ALYOSMA" />
+          <div class="galeri-overlay"><div class="galeri-caption">Kegiatan Alam</div></div>
+        </div>
+        <div class="galeri-item reveal" data-index="7">
+          <img src="images/kegiatan_upacara.jpg.jpeg" alt="Upacara ALYOSMA" />
+          <div class="galeri-overlay"><div class="galeri-caption">Upacara Api Unggun</div></div>
+        </div>
+        <div class="galeri-item reveal" data-index="8">
+          <img src="images/kegiatan_lomba.jpg.jpeg" alt="Lomba Pramuka ALYOSMA" />
+          <div class="galeri-overlay"><div class="galeri-caption">Lomba Pramuka</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Lightbox -->
+  <div class="lightbox" id="lightbox">
+    <button class="lightbox-close" id="lb-close">✕</button>
+    <button class="lightbox-nav prev" id="lb-prev">←</button>
+    <div id="lb-content"></div>
+    <p class="lightbox-caption" id="lb-caption"></p>
+    <p class="lightbox-counter" id="lb-counter"></p>
+    <button class="lightbox-nav next" id="lb-next">→</button>
+  </div>
+
+  <!-- ══ SOSIAL ALYOSMA ══ -->
+  <div id="sosial">
+    <div class="sosial-inner">
+      <p class="section-eyebrow reveal">07 — Ikuti Kami</p>
+      <h2 class="reveal">Temukan ALYOSMA<br/>di Media Sosial</h2>
+      <p class="reveal">Ikuti kegiatan dan update terbaru ambalan kami.</p>
+      <div class="sosial-cards reveal">
+        <a href="https://www.instagram.com/scout_alyosma" target="_blank" class="sosial-card ig" data-social="instagram">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="0.5" fill="currentColor"/>
+          </svg>
+          <div class="sosial-card-info">
+            <div class="sosial-card-label">Instagram</div>
+            <div class="sosial-card-handle">@scout_alyosma</div>
+          </div>
+        </a>
+        <a href="https://www.tiktok.com/@scout_alyosma" target="_blank" class="sosial-card tt" data-social="tiktok">
+          <svg viewBox="0 0 24 24" fill="currentColor" width="28" height="28">
+            <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.27 6.27 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.69a8.18 8.18 0 0 0 4.78 1.52V6.75a4.85 4.85 0 0 1-1.01-.06z"/>
+          </svg>
+          <div class="sosial-card-info">
+            <div class="sosial-card-label">TikTok</div>
+            <div class="sosial-card-handle">@scout_alyosma</div>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SOSIAL SEKOLAH (BARU) ══ -->
+  <div id="sosial-sekolah">
+    <div class="sosial-sekolah-inner">
+      <p class="section-eyebrow reveal">08 — Media Sosial Sekolah</p>
+      <h2 class="reveal">Ikuti SMK YAPIN Bekasi</h2>
+      <p class="reveal">Temukan informasi resmi dan kegiatan sekolah kami di berbagai platform.</p>
+      <div class="school-social-grid reveal">
+
+        <!-- YouTube -->
+        <a href="https://www.youtube.com/@smkyapinbekasi3kr" target="_blank" class="school-social-card yt">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+          </svg>
+          <div class="sc-label">YouTube</div>
+          <div class="sc-name">smkyapinbekasi 3kr</div>
+        </a>
+
+        <!-- Instagram -->
+        <a href="https://www.instagram.com/smkyapinbekasi" target="_blank" class="school-social-card ig">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="0.5" fill="currentColor"/>
+          </svg>
+          <div class="sc-label">Instagram</div>
+          <div class="sc-name">smkyapinbekasi</div>
+        </a>
+
+        <!-- TikTok -->
+        <a href="https://www.tiktok.com/@smkyapinbekasiofficial" target="_blank" class="school-social-card tt">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.27 6.27 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.69a8.18 8.18 0 0 0 4.78 1.52V6.75a4.85 4.85 0 0 1-1.01-.06z"/>
+          </svg>
+          <div class="sc-label">TikTok</div>
+          <div class="sc-name">SMK YAPIN BEKASI OFFICIAL</div>
+        </a>
+
+        <!-- Facebook -->
+        <a href="https://www.facebook.com/Smkyapinbekasi" target="_blank" class="school-social-card fb">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+          </svg>
+          <div class="sc-label">Facebook</div>
+          <div class="sc-name">Smkyapinbekasi</div>
+        </a>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ KONTAK ══ -->
+  <section id="kontak" class="contact-section">
+    <div class="contact-box reveal">
+      <div class="contact-header">
+        <div>
+          <p class="section-eyebrow">09 — Kontak Sekolah</p>
+          <h2>Informasi Sekolah</h2>
+          <p>Anda dapat menghubungi sekolah kami melalui data berikut.</p>
+        </div>
+        <button class="school-logo-box" aria-label="Lihat sejarah SMK YAPIN" id="btn-sejarah-smk" title="Klik untuk melihat sejarah SMK YAPIN Bekasi">
+          <img src="images/logo_smk_yapin.jpeg" alt="Logo SMK YAPIN Bekasi" />
+        </button>
+      </div>
+      <div class="contact-list">
+        <div class="contact-item">
+          <strong>Alamat</strong>
+          <span>Jl. KH. Noer Ali Jl. Jemb. III No. 2, Jatimulya, Kec. Tambun Selatan, Kota Bekasi, Jawa Barat</span>
+        </div>
+        <div class="contact-item">
+          <strong>Telepon</strong>
+          <a href="tel:+622188357489">(021) 88357489</a>
+        </div>
+        <div class="contact-item">
+          <strong>Email</strong>
+          <a href="mailto:smk.yapin@yahoo.com">smk.yapin@yahoo.com</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ QUOTE ══ -->
+  <div class="quote-banner">
+    <blockquote class="reveal">"Satyaku Kudarmakan,<br/>Darmaku Kubaktikan."</blockquote>
+    <cite class="reveal">— Motto Pramuka Penegak</cite>
+  </div>
+
+  <!-- ══ FOOTER ══ -->
+  <footer>
+    <div class="footer-social">
+      <!-- ALYOSMA -->
+      <a href="https://www.instagram.com/scout_alyosma" target="_blank" title="Instagram ALYOSMA" data-social="instagram">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="0.5" fill="currentColor"/>
+        </svg>
+      </a>
+      <a href="https://www.tiktok.com/@scout_alyosma" target="_blank" title="TikTok ALYOSMA" data-social="tiktok">
+        <svg viewBox="0 0 24 24" fill="currentColor">
+          <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.27 6.27 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.69a8.18 8.18 0 0 0 4.78 1.52V6.75a4.85 4.85 0 0 1-1.01-.06z"/>
+        </svg>
+      </a>
+      <!-- SEKOLAH -->
+       <a href="https://www.youtube.com/@smkyapinbekasi3kr" target="_blank" title="YouTube SMK YAPIN Bekasi">
+        <svg viewBox="0 0 24 24" fill="currentColor">
+          <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+        </svg>
+      </a>
+      <a href="https://www.instagram.com/smkyapinbekasi" target="_blank" title="Instagram SMK YAPIN Bekasi">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="0.5" fill="currentColor"/>
+        </svg>
+      </a>
+      <a href="https://www.tiktok.com/@smkyapinbekasiofficial" target="_blank" title="TikTok SMK YAPIN Bekasi">
+        <svg viewBox="0 0 24 24" fill="currentColor">
+          <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.27 6.27 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.69a8.18 8.18 0 0 0 4.78 1.52V6.75a4.85 4.85 0 0 1-1.01-.06z"/>
+        </svg>
+      </a>
+      <a href="https://www.facebook.com/Smkyapinbekasi" target="_blank" title="Facebook SMK YAPIN Bekasi">
+        <svg viewBox="0 0 24 24" fill="currentColor">
+          <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+        </svg>
+      </a>
+    </div>
+    <p id="footer-copy">© 2026 <span>ALYOSMA</span> — Ambalan Yos Sudarso &amp; Malahayati</p>
+    <p id="footer-meta" style="margin-top:5px">SMK YAPIN Bekasi · Pramuka Penegak</p>
+    <p style="margin-top:12px; font-size:0.75rem; color:rgba(247,240,230,0.35)">Untuk update konten utama, ubah data di bagian ownerConfig.</p>
+  </footer>
+
+  <script>
+    /* ════════════════════════════════
+       OWNER CONFIG — edit di sini
+    ════════════════════════════════ */
+    const ownerConfig = {
+      brand: 'ALYOSMA',
+      heroBadge: 'Pramuka Penegak · SMK YAPIN Bekasi',
+      heroTitle: 'ALY<span>OS</span>MA',
+      heroSubtitle: 'Ambalan Yos Sudarso & Malahayati',
+      heroDesc: 'Dibentuk 14 Agustus 2024',
+      heroQuote: 'Berani, Teguh, dan Berdedikasi untuk Bangsa.',
+      /* ── Dua banner: banner1 = slide pertama, banner2 = slide kedua ── */
+      heroBanner1: 'images/benner_alyosma.jpg.jpeg',
+      heroBanner2: 'images/benner_alyosma2.jpg.jpeg', /* ← ganti dengan nama file banner ke-2 */
+      profileImage: 'images/profil_alyosma.jpg.jpeg',
+      social: {
+        instagram: 'https://www.instagram.com/scout_alyosma',
+        tiktok: 'https://www.tiktok.com/@scout_alyosma'
+      },
+      footer: {
+        copy: '© 2026',
+        org: 'Ambalan Yos Sudarso & Malahayati',
+        meta: 'SMK YAPIN Bekasi · Pramuka Penegak'
+      }
+    };
+
+    document.addEventListener('DOMContentLoaded', () => {
+
+      /* ── Apply ownerConfig ── */
+      const set = (id, html, isHTML = false) => {
+        const el = document.getElementById(id);
+        if (el) isHTML ? el.innerHTML = html : el.textContent = html;
+      };
+      set('site-brand', ownerConfig.brand);
+      set('hero-badge', ownerConfig.heroBadge);
+      set('hero-title', ownerConfig.heroTitle, true);
+      set('hero-subtitle', ownerConfig.heroSubtitle);
+      set('hero-desc', ownerConfig.heroDesc);
+      set('hero-quote', ownerConfig.heroQuote);
+
+      /* Set banner slides */
+      const slide0 = document.getElementById('slide-0');
+      const slide1 = document.getElementById('slide-1');
+      if (slide0) slide0.style.backgroundImage = `url('${ownerConfig.heroBanner1}')`;
+      if (slide1) slide1.style.backgroundImage = `url('${ownerConfig.heroBanner2}')`;
+
+      const profileImg = document.querySelector('.profile-img img');
+      if (profileImg) profileImg.src = ownerConfig.profileImage;
+
+      document.querySelectorAll('[data-social="instagram"]').forEach(l => l.href = ownerConfig.social.instagram);
+      document.querySelectorAll('[data-social="tiktok"]').forEach(l => l.href = ownerConfig.social.tiktok);
+
+      const footerCopyEl = document.getElementById('footer-copy');
+      if (footerCopyEl) footerCopyEl.innerHTML = `${ownerConfig.footer.copy} <span>${ownerConfig.brand}</span> — ${ownerConfig.footer.org}`;
+      set('footer-meta', ownerConfig.footer.meta);
+
+      /* ════════════════════════════
+         BANNER SLIDER (slide dari samping)
+      ════════════════════════════ */
+      const slides = document.querySelectorAll('.hero-slide');
+      const dots   = document.querySelectorAll('.slider-dot');
+      let currentSlide = 0;
+      let sliderTimer;
+
+      function goToSlide(index) {
+        /* Tandai yang aktif sebagai "exit" (ke kiri) */
+        slides[currentSlide].classList.remove('active');
+        slides[currentSlide].classList.add('exit');
+        dots[currentSlide].classList.remove('active');
+
+        /* Setelah transisi selesai, hapus class exit */
+        const exitSlide = slides[currentSlide];
+        setTimeout(() => {
+          exitSlide.classList.remove('exit');
+          exitSlide.style.transform = 'translateX(100%)'; /* reset posisi ke kanan */
+        }, 950);
+
+        currentSlide = index;
+        slides[currentSlide].style.transform = ''; /* pastikan slide baru dari kanan */
+        /* Trigger reflow agar transisi berjalan */
+        void slides[currentSlide].offsetWidth;
+        slides[currentSlide].classList.add('active');
+        dots[currentSlide].classList.add('active');
+      }
+
+      function nextSlide() {
+        goToSlide((currentSlide + 1) % slides.length);
+      }
+
+      /* Auto-play setiap 5 detik */
+      function startAutoplay() {
+        sliderTimer = setInterval(nextSlide, 5000);
+      }
+      function resetAutoplay() {
+        clearInterval(sliderTimer);
+        startAutoplay();
+      }
+
+      startAutoplay();
+
+      /* Klik dot untuk pindah manual */
+      dots.forEach((dot, i) => {
+        dot.addEventListener('click', () => {
+          if (i === currentSlide) return;
+          resetAutoplay();
+          goToSlide(i);
+        });
+      });
+
+      /* ════════════════════════════
+         REVEAL ON SCROLL
+      ════════════════════════════ */
+      /* Aktifkan animasi reveal hanya setelah JS siap */
+      document.body.classList.add('js-ready');
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(e => {
+          if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); }
+        });
+      }, { threshold: 0.1 });
+      document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+      /* ════════════════════════════
+         NAVBAR SHADOW ON SCROLL
+      ════════════════════════════ */
+      const navbar = document.querySelector('nav');
+      window.addEventListener('scroll', () => {
+        navbar.style.boxShadow = window.scrollY > 40 ? '0 4px 24px rgba(0,0,0,0.45)' : 'none';
+      });
+
+      /* ════════════════════════════
+         GALERI LIGHTBOX
+      ════════════════════════════ */
+      const galItems  = document.querySelectorAll('.galeri-item');
+      const lightbox  = document.getElementById('lightbox');
+      const lbContent = document.getElementById('lb-content');
+      const lbCaption = document.getElementById('lb-caption');
+      const lbCounter = document.getElementById('lb-counter');
+      let lbCurrent = 0;
+
+      function getCaption(item) {
+        return item.querySelector('.galeri-caption')?.textContent || '';
+      }
+
+      function showLbItem(index) {
+        lbCurrent = (index + galItems.length) % galItems.length;
+        const item = galItems[lbCurrent];
+        const img  = item.querySelector('img');
+        lbContent.innerHTML = '';
+        if (img) {
+          const i = document.createElement('img');
+          i.src = img.src; i.alt = img.alt;
+          lbContent.appendChild(i);
+        }
+        lbCaption.textContent = getCaption(item);
+        lbCounter.textContent = `${lbCurrent + 1} / ${galItems.length}`;
+      }
+
+      galItems.forEach((item, i) => {
+        item.addEventListener('click', () => {
+          lightbox.classList.add('active');
+          showLbItem(i);
+        });
+      });
+
+      document.getElementById('lb-close').addEventListener('click', () => lightbox.classList.remove('active'));
+      document.getElementById('lb-prev').addEventListener('click', () => showLbItem(lbCurrent - 1));
+      document.getElementById('lb-next').addEventListener('click', () => showLbItem(lbCurrent + 1));
+      lightbox.addEventListener('click', (e) => { if (e.target === lightbox) lightbox.classList.remove('active'); });
+
+      document.addEventListener('keydown', (e) => {
+        if (!lightbox.classList.contains('active')) return;
+        if (e.key === 'ArrowLeft')  showLbItem(lbCurrent - 1);
+        if (e.key === 'ArrowRight') showLbItem(lbCurrent + 1);
+        if (e.key === 'Escape')     lightbox.classList.remove('active');
+      });
+
+
+      /* ══ PREVIEW FOTO ANGGOTA ══ */
+      function previewFotoAnggota(input) {
+        if (!input.files || !input.files[0]) return;
+        const reader = new FileReader();
+        reader.onload = e => {
+          const img = document.getElementById('foto-anggota-bersama');
+          const placeholder = document.getElementById('foto-anggota-placeholder');
+          img.src = e.target.result;
+          img.style.display = 'block';
+          placeholder.style.display = 'none';
+          // Simpan ke localStorage agar tidak hilang
+          localStorage.setItem('aly_foto_anggota', e.target.result);
+        };
+        reader.readAsDataURL(input.files[0]);
+      }
+
+      /* ══ Load foto anggota dari localStorage ══ */
+      const savedFoto = localStorage.getItem('aly_foto_anggota');
+      if (savedFoto) {
+        const img = document.getElementById('foto-anggota-bersama');
+        const placeholder = document.getElementById('foto-anggota-placeholder');
+        if (img) { img.src = savedFoto; img.style.display = 'block'; }
+        if (placeholder) placeholder.style.display = 'none';
+      }
+
+      /* ══ MODAL SEJARAH SMK ══ */
+      const modalSmk   = document.getElementById('modal-smk');
+      const btnOpenSmk = document.getElementById('btn-sejarah-smk');
+      const btnClose1  = document.getElementById('modal-smk-close');
+      const btnClose2  = document.getElementById('modal-smk-close2');
+
+      function openModalSmk() {
+        modalSmk.classList.add('open');
+        document.body.style.overflow = 'hidden';
+      }
+      function closeModalSmk() {
+        modalSmk.classList.remove('open');
+        document.body.style.overflow = '';
+      }
+
+      if (btnOpenSmk) btnOpenSmk.addEventListener('click', openModalSmk);
+      if (btnClose1)  btnClose1.addEventListener('click', closeModalSmk);
+      if (btnClose2)  btnClose2.addEventListener('click', closeModalSmk);
+      modalSmk.addEventListener('click', (e) => { if (e.target === modalSmk) closeModalSmk(); });
+      document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModalSmk(); });
+
+
+
+      /* ══ LOAD FOTO ANGGOTA DARI ADMIN PANEL ══ */
+      function loadFotoStruktur() {
+        const fotoMap = JSON.parse(localStorage.getItem('aly_foto_map') || '{}');
+        // Jika ada foto map dari admin panel, coba cocokkan dengan nama jabatan
+        // Foto juga bisa langsung dari file images/
+      }
+
+      // Load foto anggota biasa dari localStorage jika ada
+      const savedFotoAnggota = localStorage.getItem('aly_foto_anggota');
+      if (savedFotoAnggota) {
+        const img = document.getElementById('anggota-biasa-img');
+        if (img) {
+          img.src = savedFotoAnggota;
+          img.style.display = 'block';
+          const ph = document.getElementById('anggota-placeholder');
+          if (ph) ph.style.display = 'none';
+        }
+      }
+
+      /* Load foto per anggota dari admin panel berdasarkan urutan jabatan */
+      (function loadFotoPerAnggota() {
+        // Mapping foto dari admin: ambil dari localStorage berdasarkan ID anggota
+        // ID default sesuai anggotaDefault di alyosma-app.html (1-19)
+        const fotoIds = {
+          'struktur_pembina': 1,
+          'struktur_pradana_putra': 2,
+          'struktur_pradana_putri': 3,
+          'struktur_adat_putra': 4,
+          'struktur_adat_putri': 5,
+          'struktur_sekre_putra': 6,
+          'struktur_sekre_putri': 7,
+          'struktur_bendahara_putra': 8,
+          'struktur_bendahara_putri': 9,
+          'struktur_humas_putra': 10,
+          'struktur_humas_putri': 11,
+          'struktur_kesehatan_putra': 12,
+          'struktur_kesehatan_putri': 13,
+          'struktur_dokumentasi_putra': 14,
+          'struktur_dokumentasi_putri': 15,
+          'struktur_perlengkapan_putra': 16,
+          'struktur_perlengkapan_putri': 17,
+          'struktur_keamanan_putra': 18,
+          'struktur_keamanan_putri': 19,
+        };
+        Object.entries(fotoIds).forEach(([imgName, anggotaId]) => {
+          const foto = localStorage.getItem('aly_foto_anggota_' + anggotaId);
+          if (!foto) return;
+          // Cari semua img dengan src yang mengandung nama file tersebut
+          document.querySelectorAll('.struktur-photo img').forEach(img => {
+            if (img.src && img.src.includes(imgName)) {
+              img.src = foto;
+              img.style.display = 'block';
+              const ph = img.nextElementSibling;
+              if (ph) ph.style.display = 'none';
+            }
+          });
+        });
+      })();
+
+      /* ══ UPLOAD FOTO ANGGOTA BIASA ══ */
+      function uploadFotoAnggota(input) {
+        const file = input.files[0]; if (!file) return;
+        const reader = new FileReader();
+        reader.onload = e => {
+          const img = document.getElementById('anggota-biasa-img');
+          const placeholder = document.getElementById('anggota-placeholder');
+          img.src = e.target.result;
+          img.style.display = 'block';
+          placeholder.style.display = 'none';
+          localStorage.setItem('aly_foto_anggota', e.target.result);
+        };
+        reader.readAsDataURL(file);
+      }
+
+      /* foto anggota biasa sudah dihandle di atas */
+
+    }); /* end DOMContentLoaded */
+  </script>
+  <!-- ══ MODAL STRUKTUR AMBALAN ══ -->
+  <div id="modal-struktur">
+    <div class="modal-struktur-box">
+      <div class="modal-struktur-header">
+        <button class="modal-struktur-close" id="btn-close-struktur">✕</button>
+        <h2>Struktur Ambalan</h2>
+        <p>ALYOSMA — Yos Sudarso &amp; Malahayati</p>
+      </div>
+      <div class="modal-struktur-body">
+
+        <div class="struktur-tree">
+
+          <!-- 1. PEMBINA -->
+          <div class="struktur-jabatan-label">Pembina</div>
+          <div class="struktur-row-single">
+            <div class="struktur-card pembina">
+              <div class="struktur-photo">
+                <img src="images/struktur_pembina.jpg" alt="Pembina"
+                  onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+                <div class="photo-placeholder" style="display:none;">👤</div>
+              </div>
+              <div class="jabatan">Pembina</div>
+              <div class="nama">Nama Pembina</div>
+              <span class="gender-tag pembina-tag">Pembina</span>
+            </div>
+          </div>
+
+          <div class="struktur-line"></div>
+          <div class="struktur-line-split"></div>
+
+          <!-- 2. PRADANA -->
+          <div class="struktur-jabatan-label" style="margin-top:24px;">Pradana</div>
+          <div class="struktur-row-pair">
+            <div class="struktur-card">
+              <div class="struktur-photo">
+                <img src="images/struktur_pradana_putra.jpg" alt="Pradana Putra"
+                  onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+                <div class="photo-placeholder" style="display:none;">👤</div>
+              </div>
+              <div class="jabatan">Pradana</div>
+              <div class="nama">Nama Pradana Putra</div>
+              <span class="gender-tag putra">Putra</span>
+            </div>
+            <div class="struktur-card">
+              <div class="struktur-photo">
+                <img src="images/struktur_pradana_putri.jpg" alt="Pradana Putri"
+                  onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+                <div class="photo-placeholder" style="display:none;">👤</div>
+              </div>
+              <div class="jabatan">Pradana</div>
+              <div class="nama">Nama Pradana Putri</div>
+              <span class="gender-tag putri">Putri</span>
+            </div>
+          </div>
+
+          <div class="struktur-line"></div>
+          <div class="struktur-line-split"></div>
+
+          <!-- 3. PEMANGKU ADAT -->
+          <div class="struktur-jabatan-label" style="margin-top:24px;">Pemangku Adat</div>
+          <div class="struktur-row-pair">
+            <div class="struktur-card">
+              <div class="struktur-photo">
+                <img src="images/struktur_adat_putra.jpg" alt="Pemangku Adat Putra"
+                  onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+                <div class="photo-placeholder" style="display:none;">👤</div>
+              </div>
+              <div class="jabatan">Pemangku Adat</div>
+              <div class="nama">Nama Pemangku Adat Putra</div>
+              <span class="gender-tag putra">Putra</span>
+            </div>
+            <div class="struktur-card">
+              <div class="struktur-photo">
+                <img src="images/struktur_adat_putri.jpg" alt="Pemangku Adat Putri"
+                  onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+                <div class="photo-placeholder" style="display:none;">👤</div>
+              </div>
+              <div class="jabatan">Pemangku Adat</div>
+              <div class="nama">Nama Pemangku Adat Putri</div>
+              <span class="gender-tag putri">Putri</span>
+            </div>
+          </div>
+
+          <div class="struktur-line"></div>
+          <div class="struktur-line-split"></div>
+
+          <!-- 4. SEKRETARIS -->
+          <div class="struktur-jabatan-label" style="margin-top:24px;">Sekretaris</div>
+          <div class="struktur-row-pair">
+            <div class="struktur-card">
+              <div class="struktur-photo">
+                <img src="images/struktur_sekre_putra.jpg" alt="Sekretaris Putra"
+                  onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+                <div class="photo-placeholder" style="display:none;">👤</div>
+              </div>
+              <div class="jabatan">Sekretaris</div>
+              <div class="nama">Nama Sekretaris Putra</div>
+              <span class="gender-tag putra">Putra</span>
+            </div>
+            <div class="struktur-card">
+              <div class="struktur-photo">
+                <img src="images/struktur_sekre_putri.jpg" alt="Sekretaris Putri"
+                  onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+                <div class="photo-placeholder" style="display:none;">👤</div>
+              </div>
+              <div class="jabatan">Sekretaris</div>
+              <div class="nama">Nama Sekretaris Putri</div>
+              <span class="gender-tag putri">Putri</span>
+            </div>
+          </div>
+
+          <div class="struktur-line"></div>
+          <div class="struktur-line-split"></div>
+
+          <!-- 5. JURU UANG -->
+          <div class="struktur-jabatan-label" style="margin-top:24px;">Juru Uang</div>
+          <div class="struktur-row-pair">
+            <div class="struktur-card">
+              <div class="struktur-photo">
+                <img src="images/struktur_bendahara_putra.jpg" alt="Juru Uang Putra"
+                  onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+                <div class="photo-placeholder" style="display:none;">👤</div>
+              </div>
+              <div class="jabatan">Juru Uang</div>
+              <div class="nama">Nama Juru Uang Putra</div>
+              <span class="gender-tag putra">Putra</span>
+            </div>
+            <div class="struktur-card">
+              <div class="struktur-photo">
+                <img src="images/struktur_bendahara_putri.jpg" alt="Juru Uang Putri"
+                  onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+                <div class="photo-placeholder" style="display:none;">👤</div>
+              </div>
+              <div class="jabatan">Juru Uang</div>
+              <div class="nama">Nama Juru Uang Putri</div>
+              <span class="gender-tag putri">Putri</span>
+            </div>
+          </div>
+
+          <div class="struktur-line"></div>
+          <div class="struktur-line-split"></div>
+
+          <!-- 6. HUMAS -->
+          <div class="struktur-jabatan-label" style="margin-top:24px;">Humas</div>
+          <div class="struktur-row-pair">
+            <div class="struktur-card">
+              <div class="struktur-photo">
+                <img src="images/struktur_humas_putra.jpg" alt="Humas Putra"
+                  onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+                <div class="photo-placeholder" style="display:none;">👤</div>
+              </div>
+              <div class="jabatan">Humas</div>
+              <div class="nama">Nama Humas Putra</div>
+              <span class="gender-tag putra">Putra</span>
+            </div>
+            <div class="struktur-card">
+              <div class="struktur-photo">
+                <img src="images/struktur_humas_putri.jpg" alt="Humas Putri"
+                  onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+                <div class="photo-placeholder" style="display:none;">👤</div>
+              </div>
+              <div class="jabatan">Humas</div>
+              <div class="nama">Nama Humas Putri</div>
+              <span class="gender-tag putri">Putri</span>
+            </div>
+          </div>
+
+          <div class="struktur-line"></div>
+          <div class="struktur-line-split"></div>
+
+          <!-- 7. KESEHATAN -->
+          <div class="struktur-jabatan-label" style="margin-top:24px;">Kesehatan</div>
+          <div class="struktur-row-pair">
+            <div class="struktur-card">
+              <div class="struktur-photo">
+                <img src="images/struktur_kesehatan_putra.jpg" alt="Kesehatan Putra"
+                  onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+                <div class="photo-placeholder" style="display:none;">👤</div>
+              </div>
+              <div class="jabatan">Kesehatan</div>
+              <div class="nama">Nama Kesehatan Putra</div>
+              <span class="gender-tag putra">Putra</span>
+            </div>
+            <div class="struktur-card">
+              <div class="struktur-photo">
+                <img src="images/struktur_kesehatan_putri.jpg" alt="Kesehatan Putri"
+                  onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+                <div class="photo-placeholder" style="display:none;">👤</div>
+              </div>
+              <div class="jabatan">Kesehatan</div>
+              <div class="nama">Nama Kesehatan Putri</div>
+              <span class="gender-tag putri">Putri</span>
+            </div>
+          </div>
+
+          <div class="struktur-line"></div>
+          <div class="struktur-line-split"></div>
+
+          <!-- 8. DOKUMENTASI -->
+          <div class="struktur-jabatan-label" style="margin-top:24px;">Dokumentasi</div>
+          <div class="struktur-row-pair">
+            <div class="struktur-card">
+              <div class="struktur-photo">
+                <img src="images/struktur_dokumentasi_putra.jpg" alt="Dokumentasi Putra"
+                  onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+                <div class="photo-placeholder" style="display:none;">👤</div>
+              </div>
+              <div class="jabatan">Dokumentasi</div>
+              <div class="nama">Nama Dokumentasi Putra</div>
+              <span class="gender-tag putra">Putra</span>
+            </div>
+            <div class="struktur-card">
+              <div class="struktur-photo">
+                <img src="images/struktur_dokumentasi_putri.jpg" alt="Dokumentasi Putri"
+                  onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+                <div class="photo-placeholder" style="display:none;">👤</div>
+              </div>
+              <div class="jabatan">Dokumentasi</div>
+              <div class="nama">Nama Dokumentasi Putri</div>
+              <span class="gender-tag putri">Putri</span>
+            </div>
+          </div>
+
+          <div class="struktur-line"></div>
+          <div class="struktur-line-split"></div>
+
+          <!-- 9. PERLENGKAPAN -->
+          <div class="struktur-jabatan-label" style="margin-top:24px;">Perlengkapan</div>
+          <div class="struktur-row-pair">
+            <div class="struktur-card">
+              <div class="struktur-photo">
+                <img src="images/struktur_perlengkapan_putra.jpg" alt="Perlengkapan Putra"
+                  onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+                <div class="photo-placeholder" style="display:none;">👤</div>
+              </div>
+              <div class="jabatan">Perlengkapan</div>
+              <div class="nama">Nama Perlengkapan Putra</div>
+              <span class="gender-tag putra">Putra</span>
+            </div>
+            <div class="struktur-card">
+              <div class="struktur-photo">
+                <img src="images/struktur_perlengkapan_putri.jpg" alt="Perlengkapan Putri"
+                  onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+                <div class="photo-placeholder" style="display:none;">👤</div>
+              </div>
+              <div class="jabatan">Perlengkapan</div>
+              <div class="nama">Nama Perlengkapan Putri</div>
+              <span class="gender-tag putri">Putri</span>
+            </div>
+          </div>
+
+          <div class="struktur-line"></div>
+          <div class="struktur-line-split"></div>
+
+          <!-- 10. KEAMANAN -->
+          <div class="struktur-jabatan-label" style="margin-top:24px;">Keamanan</div>
+          <div class="struktur-row-pair">
+            <div class="struktur-card">
+              <div class="struktur-photo">
+                <img src="images/struktur_keamanan_putra.jpg" alt="Keamanan Putra"
+                  onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+                <div class="photo-placeholder" style="display:none;">👤</div>
+              </div>
+              <div class="jabatan">Keamanan</div>
+              <div class="nama">Nama Keamanan Putra</div>
+              <span class="gender-tag putra">Putra</span>
+            </div>
+            <div class="struktur-card">
+              <div class="struktur-photo">
+                <img src="images/struktur_keamanan_putri.jpg" alt="Keamanan Putri"
+                  onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+                <div class="photo-placeholder" style="display:none;">👤</div>
+              </div>
+              <div class="jabatan">Keamanan</div>
+              <div class="nama">Nama Keamanan Putri</div>
+              <span class="gender-tag putri">Putri</span>
+            </div>
+          </div>
+
+
+          <!-- ── ANGGOTA BIASA (foto bareng) ── -->
+          <div class="struktur-line"></div>
+          <div class="struktur-line-split"></div>
+
+          <div class="anggota-biasa-wrap">
+            <div class="anggota-biasa-label" style="margin-top:24px;">Anggota</div>
+            <div class="anggota-biasa-foto" id="anggota-biasa-foto-wrap" onclick="document.getElementById('input-foto-anggota').click()">
+              <img id="anggota-biasa-img" src="images/foto_anggota_biasa.jpg" alt="Foto Anggota"
+                onerror="this.style.display='none';document.getElementById('anggota-placeholder').style.display='flex';" />
+              <div class="anggota-biasa-placeholder" id="anggota-placeholder" style="display:none">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                  <rect x="3" y="3" width="18" height="18" rx="2"/>
+                  <circle cx="8.5" cy="8.5" r="1.5"/>
+                  <path d="M21 15l-5-5L5 21"/>
+                </svg>
+                <span>Foto Bersama Anggota</span>
+                <span style="font-size:0.62rem;opacity:0.6">Klik untuk upload foto</span>
+              </div>
+            </div>
+            <input type="file" id="input-foto-anggota" accept="image/*" onchange="uploadFotoAnggota(this)"/>
+            <div class="anggota-biasa-upload" onclick="document.getElementById('input-foto-anggota').click()">
+              📸 Klik untuk upload foto bersama anggota
+            </div>
+            <p style="font-size:0.65rem;color:rgba(247,240,230,0.25);text-align:center;margin-top:6px;letter-spacing:0.5px">
+              Atau tambahkan file bernama <code style="color:rgba(201,146,42,0.5)">foto_anggota_biasa.jpg</code> ke folder images/
+            </p>
+          </div>
+
+        </div><!-- /struktur-tree -->
+
+        <button id="btn-close-struktur2" style="
+          margin-top:32px; width:100%; padding:14px;
+          background:linear-gradient(135deg,#3D1A0A,#6B2D0E);
+          color:#E8B84B; font-family:'Cinzel',serif; font-size:0.82rem;
+          font-weight:700; letter-spacing:2px; text-transform:uppercase;
+          border:none; border-radius:8px; cursor:pointer;
+        ">Tutup</button>
+
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ══ QR CODE ══ -->
+  <div class="qr-section">
+    <div class="qr-inner">
+      <p class="section-eyebrow reveal" style="color:rgba(201,146,42,0.65);">— QR Code</p>
+      <h2 class="reveal">Scan &amp; Kunjungi Website</h2>
+      <p class="reveal">Scan kode QR di bawah untuk langsung mengunjungi website ALYOSMA</p>
+      <div class="reveal" style="display:flex;flex-direction:column;align-items:center;">
+        <div class="qr-box">
+          <canvas id="qr-canvas"></canvas>
+          <div class="qr-box-label">ALYOSMA · SMK YAPIN Bekasi</div>
+        </div>
+        <a id="qr-download" class="qr-download-btn" download="QR-ALYOSMA.png">
+          ⬇ Unduh QR Code
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ MODAL SEJARAH SMK YAPIN ══ -->
+  <div id="modal-smk" role="dialog" aria-modal="true" aria-labelledby="modal-smk-title" style="
+    display:none; position:fixed; inset:0; z-index:300;
+    background:rgba(8,3,0,0.88); backdrop-filter:blur(6px);
+    align-items:center; justify-content:center; padding:20px;
+  ">
+    <div style="
+      background: linear-gradient(160deg, #fffdf8 0%, #f4e8d2 100%);
+      border-radius:16px; max-width:680px; width:100%;
+      max-height:90vh; overflow-y:auto;
+      box-shadow:0 30px 80px rgba(0,0,0,0.5);
+      position:relative; padding:0;
+    ">
+      <!-- Header -->
+      <div style="
+        background: linear-gradient(135deg, #3D1A0A, #6B2D0E);
+        border-radius:16px 16px 0 0; padding:32px 32px 28px;
+        display:flex; align-items:center; gap:20px; position:relative;
+      ">
+        <div style="
+          width:72px; height:72px; border-radius:50%; flex-shrink:0;
+          background:#fff; border:3px solid rgba(201,146,42,0.5);
+          overflow:hidden; display:flex; align-items:center; justify-content:center;
+        ">
+          <img src="images/logo_smk_yapin.jpeg" alt="Logo SMK YAPIN" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" />
+        </div>
+        <div>
+          <p style="font-size:0.65rem;letter-spacing:3px;text-transform:uppercase;color:rgba(201,146,42,0.7);margin-bottom:4px;">Profil &amp; Sejarah</p>
+          <h2 id="modal-smk-title" style="font-family:'Cinzel',serif;font-size:1.4rem;font-weight:700;color:#E8B84B;line-height:1.2;">SMK YAPIN Bekasi</h2>
+          <p style="font-size:0.8rem;color:rgba(247,240,230,0.6);margin-top:4px;">Yayasan Pendidikan Islam Noer Hidayah</p>
+        </div>
+        <button id="modal-smk-close" aria-label="Tutup" style="
+          position:absolute; top:16px; right:16px;
+          background:rgba(255,255,255,0.1); border:none; border-radius:50%;
+          width:36px; height:36px; color:rgba(247,240,230,0.7);
+          font-size:1.2rem; cursor:pointer; display:flex;
+          align-items:center; justify-content:center; transition:background 0.2s;
+        ">✕</button>
+      </div>
+
+      <!-- Body -->
+      <div style="padding:32px;">
+
+        <!-- Intro -->
+        <p style="font-size:0.97rem;color:#4A2C10;line-height:1.8;margin-bottom:28px;">
+          SMK YAPIN Bekasi dikelola oleh <strong style="color:#3D1A0A;">Yayasan Pendidikan Islam Noer Hidayah</strong>,
+          yang didirikan pada tahun 1995. Yayasan ini awalnya menaungi SMP Noer Hidayah sebelum akhirnya
+          memperluas layanannya dengan mendirikan sekolah kejuruan.
+        </p>
+
+        <!-- Alamat -->
+        <div style="
+          background:rgba(201,146,42,0.1); border-left:3px solid #C9922A;
+          border-radius:0 8px 8px 0; padding:14px 18px; margin-bottom:28px;
+          display:flex; gap:12px; align-items:flex-start;
+        ">
+          <span style="font-size:1.2rem; margin-top:2px;">📍</span>
+          <p style="font-size:0.88rem;color:#5A3415;line-height:1.7;margin:0;">
+            Jl. Raya KH. Noer Ali, Jembatan III, Jatimulya, Tambun Selatan, Bekasi
+          </p>
+        </div>
+
+        <!-- Timeline -->
+        <p style="font-size:0.7rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#C9922A;margin-bottom:20px;">
+          Tonggak Sejarah
+        </p>
+
+        <div style="display:flex;flex-direction:column;gap:0;">
+
+          <!-- 1995 Yayasan -->
+          <div style="display:flex;gap:16px;align-items:flex-start;padding-bottom:24px;position:relative;">
+            <div style="display:flex;flex-direction:column;align-items:center;gap:0;">
+              <div style="
+                width:44px;height:44px;border-radius:50%;flex-shrink:0;
+                background:linear-gradient(135deg,#3D1A0A,#6B2D0E);
+                border:3px solid #C9922A;
+                display:flex;align-items:center;justify-content:center;
+                font-size:1rem;
+              ">🏫</div>
+              <div style="width:2px;flex:1;background:rgba(201,146,42,0.25);margin-top:6px;min-height:40px;"></div>
+            </div>
+            <div style="padding-top:8px;">
+              <span style="
+                display:inline-block;background:#3D1A0A;color:#E8B84B;
+                font-family:'Cinzel',serif;font-size:0.78rem;font-weight:700;
+                letter-spacing:2px;padding:3px 10px;border-radius:2px;margin-bottom:8px;
+              ">1995</span>
+              <h3 style="font-family:'Cinzel',serif;font-size:1rem;font-weight:700;color:#3D1A0A;margin-bottom:6px;">
+                Pendirian Yayasan
+              </h3>
+              <p style="font-size:0.9rem;color:#5A3415;line-height:1.7;margin:0;">
+                Yayasan Pendidikan Islam Noer Hidayah resmi berdiri dan mulai mengelola
+                lembaga pendidikan Islam di kawasan Bekasi, diawali dengan menaungi
+                <strong>SMP Noer Hidayah</strong>.
+              </p>
+            </div>
+          </div>
+
+          <!-- 1995 SMK -->
+          <div style="display:flex;gap:16px;align-items:flex-start;padding-bottom:24px;position:relative;">
+            <div style="display:flex;flex-direction:column;align-items:center;gap:0;">
+              <div style="
+                width:44px;height:44px;border-radius:50%;flex-shrink:0;
+                background:linear-gradient(135deg,#1a4a8a,#1877F2);
+                border:3px solid #C9922A;
+                display:flex;align-items:center;justify-content:center;
+                font-size:1rem;
+              ">🎓</div>
+              <div style="width:2px;flex:1;background:rgba(201,146,42,0.25);margin-top:6px;min-height:40px;"></div>
+            </div>
+            <div style="padding-top:8px;">
+              <span style="
+                display:inline-block;background:#3D1A0A;color:#E8B84B;
+                font-family:'Cinzel',serif;font-size:0.78rem;font-weight:700;
+                letter-spacing:2px;padding:3px 10px;border-radius:2px;margin-bottom:8px;
+              ">1995</span>
+              <h3 style="font-family:'Cinzel',serif;font-size:1rem;font-weight:700;color:#3D1A0A;margin-bottom:6px;">
+                Pembukaan SMK YAPIN
+              </h3>
+              <p style="font-size:0.9rem;color:#5A3415;line-height:1.7;margin:0;">
+                Seiring berkembangnya kebutuhan dunia kerja, <strong>SMK YAPIN</strong> resmi
+                dibuka untuk mencetak lulusan yang siap bersaing di era global dengan
+                berbagai program keahlian kejuruan.
+              </p>
+            </div>
+          </div>
+
+          <!-- 2014 -->
+          <div style="display:flex;gap:16px;align-items:flex-start;">
+            <div style="display:flex;flex-direction:column;align-items:center;">
+              <div style="
+                width:44px;height:44px;border-radius:50%;flex-shrink:0;
+                background:linear-gradient(135deg,#2D5016,#1A3009);
+                border:3px solid #C9922A;
+                display:flex;align-items:center;justify-content:center;
+                font-size:1rem;
+              ">🏗️</div>
+            </div>
+            <div style="padding-top:8px;">
+              <span style="
+                display:inline-block;background:#3D1A0A;color:#E8B84B;
+                font-family:'Cinzel',serif;font-size:0.78rem;font-weight:700;
+                letter-spacing:2px;padding:3px 10px;border-radius:2px;margin-bottom:8px;
+              ">2014</span>
+              <h3 style="font-family:'Cinzel',serif;font-size:1rem;font-weight:700;color:#3D1A0A;margin-bottom:6px;">
+                Pengembangan Fasilitas
+              </h3>
+              <p style="font-size:0.9rem;color:#5A3415;line-height:1.7;margin:0;">
+                Yayasan terus meningkatkan mutu pendidikan, termasuk melakukan
+                <strong>pembaruan visi</strong> dan pemenuhan sarana prasarana sekolah
+                secara bertahap demi kualitas pembelajaran yang lebih baik.
+              </p>
+            </div>
+          </div>
+
+        </div><!-- /timeline -->
+
+        <!-- Tutup button -->
+        <button id="modal-smk-close2" style="
+          margin-top:32px; width:100%; padding:14px;
+          background:linear-gradient(135deg,#3D1A0A,#6B2D0E);
+          color:#E8B84B; font-family:'Cinzel',serif; font-size:0.85rem;
+          font-weight:700; letter-spacing:2px; text-transform:uppercase;
+          border:none; border-radius:8px; cursor:pointer; transition:opacity 0.2s;
+        " onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'">
+          Tutup
+        </button>
+
+      </div><!-- /body -->
+    </div>
+  </div><!-- /modal -->
+
+
+  <!-- QR Code library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script>
+    /* ══ MODAL STRUKTUR AMBALAN ══ */
+    const modalStruktur   = document.getElementById('modal-struktur');
+    const btnOpenStruktur = document.getElementById('btn-open-struktur');
+    const btnCloseStr1    = document.getElementById('btn-close-struktur');
+    const btnCloseStr2    = document.getElementById('btn-close-struktur2');
+
+    function openStruktur() {
+      modalStruktur.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeStruktur() {
+      modalStruktur.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+    if (btnOpenStruktur) btnOpenStruktur.addEventListener('click', openStruktur);
+    if (btnCloseStr1)    btnCloseStr1.addEventListener('click', closeStruktur);
+    if (btnCloseStr2)    btnCloseStr2.addEventListener('click', closeStruktur);
+    modalStruktur.addEventListener('click', (e) => { if (e.target === modalStruktur) closeStruktur(); });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') { closeStruktur(); }
+    });
+
+    /* ══ QR CODE GENERATOR ══ */
+    document.addEventListener('DOMContentLoaded', () => {
+      // Ambil URL website saat ini (otomatis sesuai domain Netlify)
+      const siteURL = window.location.href.split('#')[0].replace(/\/$/, '');
+
+      const qrCanvas = document.getElementById('qr-canvas');
+      if (qrCanvas && typeof QRCode !== 'undefined') {
+        // Buat QR ke div sementara lalu salin ke canvas
+        const tempDiv = document.createElement('div');
+        tempDiv.style.display = 'none';
+        document.body.appendChild(tempDiv);
+
+        new QRCode(tempDiv, {
+          text: siteURL,
+          width: 200,
+          height: 200,
+          colorDark: '#3D1A0A',
+          colorLight: '#FFFFFF',
+          correctLevel: QRCode.CorrectLevel.H
+        });
+
+        // Tunggu QR render lalu salin ke canvas utama
+        setTimeout(() => {
+          const qrImg = tempDiv.querySelector('img') || tempDiv.querySelector('canvas');
+          if (qrImg) {
+            const ctx = qrCanvas.getContext('2d');
+            qrCanvas.width = 200;
+            qrCanvas.height = 200;
+            if (qrImg.tagName === 'CANVAS') {
+              ctx.drawImage(qrImg, 0, 0);
+            } else {
+              const img = new Image();
+              img.onload = () => ctx.drawImage(img, 0, 0, 200, 200);
+              img.src = qrImg.src;
+            }
+            // Setup download button
+            setTimeout(() => {
+              const dlBtn = document.getElementById('qr-download');
+              if (dlBtn) dlBtn.href = qrCanvas.toDataURL('image/png');
+            }, 300);
+          }
+          document.body.removeChild(tempDiv);
+        }, 200);
+      }
+    });
+  </script>
+
+</body>
+</html>
