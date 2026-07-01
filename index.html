@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="id">
 <head>
   <meta charset="UTF-8" />
@@ -604,8 +604,112 @@
     }
     #input-foto-anggota { display: none; }
 
+
+    /* ── COUNTDOWN HUT ACCORDION ── */
+    .hut-accordion-wrap {
+      background: var(--krem);
+      display: flex; flex-direction: column; align-items: center;
+      padding-bottom: 0;
+    }
+
+    /* Tombol panah trigger */
+    .hut-trigger {
+      display: flex; flex-direction: column; align-items: center; gap: 6px;
+      background: none; border: none; cursor: pointer;
+      padding: 18px 40px;
+      width: 100%;
+    }
+    .hut-trigger-label {
+      font-size: 0.65rem; font-weight: 700; letter-spacing: 3px;
+      text-transform: uppercase; color: rgba(61,26,10,0.5);
+    }
+    .hut-trigger-arrow {
+      width: 44px; height: 44px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--coklat), #6B2D0E);
+      border: 2px solid rgba(201,146,42,0.4);
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 4px 16px rgba(61,26,10,0.25);
+      transition: transform 0.4s ease, box-shadow 0.3s;
+    }
+    .hut-trigger:hover .hut-trigger-arrow {
+      box-shadow: 0 6px 22px rgba(61,26,10,0.35);
+    }
+    .hut-trigger-arrow svg {
+      width: 22px; height: 22px; color: var(--emas);
+      transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    .hut-trigger.open .hut-trigger-arrow svg {
+      transform: rotate(180deg);
+    }
+    .hut-trigger-arrow { animation: arrowPulse 2s ease-in-out infinite; }
+    @keyframes arrowPulse {
+      0%,100% { box-shadow: 0 4px 16px rgba(61,26,10,0.25), 0 0 0 0 rgba(201,146,42,0.3); }
+      50% { box-shadow: 0 4px 16px rgba(61,26,10,0.25), 0 0 0 10px rgba(201,146,42,0); }
+    }
+
+    /* Panel countdown — tersembunyi dulu */
+    .hut-panel {
+      width: 100%;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.7s cubic-bezier(0.4, 0, 0.2, 1),
+                  opacity 0.5s ease, padding 0.5s ease;
+      opacity: 0;
+      background: linear-gradient(135deg, var(--coklat), #6B2D0E);
+    }
+    .hut-panel.open {
+      max-height: 600px;
+      opacity: 1;
+    }
+    .hut-panel-inner {
+      padding: 50px 24px;
+      text-align: center;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+    .hut-eyebrow {
+      font-size: 0.65rem; font-weight: 700; letter-spacing: 3px;
+      text-transform: uppercase; color: rgba(201,146,42,0.65); margin-bottom: 8px;
+    }
+    .hut-title {
+      font-family: 'Cinzel', serif; font-size: clamp(1.3rem, 3.5vw, 1.9rem);
+      font-weight: 700; color: var(--putih); margin-bottom: 6px;
+    }
+    .hut-sub {
+      font-size: 0.85rem; color: rgba(247,240,230,0.45); margin-bottom: 28px;
+    }
+    .hut-countdown-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: 12px; max-width: 480px; margin: 0 auto 24px;
+    }
+    .hut-countdown-item {
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(201,146,42,0.25);
+      border-radius: 10px; padding: 18px 8px;
+    }
+    .hut-countdown-num {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(1.8rem, 5vw, 2.8rem);
+      font-weight: 900; color: var(--emas-lt); line-height: 1;
+    }
+    .hut-countdown-label {
+      font-size: 0.62rem; font-weight: 700; letter-spacing: 2px;
+      text-transform: uppercase; color: rgba(247,240,230,0.4); margin-top: 5px;
+    }
+    .hut-badge {
+      display: inline-block; background: rgba(201,146,42,0.15);
+      border: 1px solid rgba(201,146,42,0.3); border-radius: 20px;
+      padding: 8px 20px; font-size: 0.8rem; color: var(--emas-lt); letter-spacing: 1px;
+    }
+    .hut-badge strong { font-weight: 700; }
+
+    @media(max-width:480px){
+      .hut-countdown-grid { gap: 8px; }
+      .hut-countdown-item { padding: 12px 6px; }
+    }
+
   </style>
-  </head>
+</head>
 <body>
 
   <!-- ══ NAV ══ -->
@@ -710,6 +814,52 @@
         <div class="date-label">Hari Berdiri</div>
       </div>
     </div>
+  </div>
+
+
+  <!-- ══ ACCORDION COUNTDOWN HUT ALYOSMA ══ -->
+  <div class="hut-accordion-wrap">
+
+    <!-- Tombol panah trigger -->
+    <button class="hut-trigger" id="hut-trigger" onclick="toggleHUT()" aria-expanded="false">
+      <span class="hut-trigger-label">🎂 HUT ALYOSMA — Tekan untuk lihat countdown</span>
+      <div class="hut-trigger-arrow">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M6 9l6 6 6-6"/>
+        </svg>
+      </div>
+    </button>
+
+    <!-- Panel countdown — terbuka saat tombol ditekan -->
+    <div class="hut-panel" id="hut-panel">
+      <div class="hut-panel-inner">
+        <p class="hut-eyebrow">🎂 Hari Ulang Tahun</p>
+        <h2 class="hut-title">Countdown HUT ALYOSMA</h2>
+        <p class="hut-sub">14 Agustus — Hari Berdiri Ambalan Yos Sudarso &amp; Malahayati</p>
+        <div class="hut-countdown-grid">
+          <div class="hut-countdown-item">
+            <div class="hut-countdown-num" id="hut-hari">--</div>
+            <div class="hut-countdown-label">Hari</div>
+          </div>
+          <div class="hut-countdown-item">
+            <div class="hut-countdown-num" id="hut-jam">--</div>
+            <div class="hut-countdown-label">Jam</div>
+          </div>
+          <div class="hut-countdown-item">
+            <div class="hut-countdown-num" id="hut-menit">--</div>
+            <div class="hut-countdown-label">Menit</div>
+          </div>
+          <div class="hut-countdown-item">
+            <div class="hut-countdown-num" id="hut-detik">--</div>
+            <div class="hut-countdown-label">Detik</div>
+          </div>
+        </div>
+        <div class="hut-badge">
+          Didirikan <strong>14 Agustus 2024</strong> · SMK YAPIN Bekasi
+        </div>
+      </div>
+    </div>
+
   </div>
 
   <!-- ══ ALASAN ══ -->
@@ -922,7 +1072,7 @@
     </div>
   </div>
 
-  <!-- ══ KONTAK ══ -->
+   <!-- ══ KONTAK ══ -->
   <section id="kontak" class="contact-section">
     <div class="contact-box reveal">
       <div class="contact-header">
@@ -973,7 +1123,7 @@
         </svg>
       </a>
       <!-- SEKOLAH -->
-       <a href="https://www.youtube.com/@smkyapinbekasi3kr" target="_blank" title="YouTube SMK YAPIN Bekasi">
+      <a href="https://www.youtube.com/@smkyapinbekasi3kr" target="_blank" title="YouTube SMK YAPIN Bekasi">
         <svg viewBox="0 0 24 24" fill="currentColor">
           <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
         </svg>
@@ -1301,22 +1451,39 @@
 
       /* foto anggota biasa sudah dihandle di atas */
 
+
+      /* ══ COUNTDOWN HUT ALYOSMA ══ */
+      function updateHUTCountdown() {
+        const now = new Date();
+        let target = new Date(now.getFullYear(), 7, 14);
+        if (now >= target) target = new Date(now.getFullYear() + 1, 7, 14);
+        const diff = target - now;
+        const pad = n => String(Math.floor(n)).padStart(2, '0');
+        const el = id => document.getElementById(id);
+        if (el('hut-hari')) {
+          el('hut-hari').textContent = pad(diff / 86400000);
+          el('hut-jam').textContent = pad((diff % 86400000) / 3600000);
+          el('hut-menit').textContent = pad((diff % 3600000) / 60000);
+          el('hut-detik').textContent = pad((diff % 60000) / 1000);
+        }
+      }
+      setInterval(updateHUTCountdown, 1000);
+      updateHUTCountdown();
+
+
+
     }); /* end DOMContentLoaded */
   </script>
-  <!-- ══ MODAL STRUKTUR AMBALAN ══ -->
-  <div id="modal-struktur">
+
+  <div id="modal-struktur" role="dialog" aria-modal="true" aria-labelledby="modal-struktur-title" style="display:none; position:fixed; inset:0; z-index:300; background:rgba(8,3,0,0.92); backdrop-filter:blur(8px); align-items:flex-start; justify-content:center; padding:20px; overflow-y:auto;">
     <div class="modal-struktur-box">
       <div class="modal-struktur-header">
-        <button class="modal-struktur-close" id="btn-close-struktur">✕</button>
-        <h2>Struktur Ambalan</h2>
-        <p>ALYOSMA — Yos Sudarso &amp; Malahayati</p>
+        <h2 id="modal-struktur-title">Struktur Kepengurusan ALYOSMA</h2>
+        <p>Susunan pengurus ambalan yang aktif dalam kegiatan.</p>
+        <button id="btn-close-struktur" class="modal-struktur-close" aria-label="Tutup struktur">✕</button>
       </div>
       <div class="modal-struktur-body">
-
         <div class="struktur-tree">
-
-          <!-- 1. PEMBINA -->
-          <div class="struktur-jabatan-label">Pembina</div>
           <div class="struktur-row-single">
             <div class="struktur-card pembina">
               <div class="struktur-photo">
@@ -1333,7 +1500,6 @@
           <div class="struktur-line"></div>
           <div class="struktur-line-split"></div>
 
-          <!-- 2. PRADANA -->
           <div class="struktur-jabatan-label" style="margin-top:24px;">Pradana</div>
           <div class="struktur-row-pair">
             <div class="struktur-card">
@@ -1361,7 +1527,6 @@
           <div class="struktur-line"></div>
           <div class="struktur-line-split"></div>
 
-          <!-- 3. PEMANGKU ADAT -->
           <div class="struktur-jabatan-label" style="margin-top:24px;">Pemangku Adat</div>
           <div class="struktur-row-pair">
             <div class="struktur-card">
@@ -1389,7 +1554,6 @@
           <div class="struktur-line"></div>
           <div class="struktur-line-split"></div>
 
-          <!-- 4. SEKRETARIS -->
           <div class="struktur-jabatan-label" style="margin-top:24px;">Sekretaris</div>
           <div class="struktur-row-pair">
             <div class="struktur-card">
@@ -1417,7 +1581,6 @@
           <div class="struktur-line"></div>
           <div class="struktur-line-split"></div>
 
-          <!-- 5. JURU UANG -->
           <div class="struktur-jabatan-label" style="margin-top:24px;">Juru Uang</div>
           <div class="struktur-row-pair">
             <div class="struktur-card">
@@ -1445,7 +1608,6 @@
           <div class="struktur-line"></div>
           <div class="struktur-line-split"></div>
 
-          <!-- 6. HUMAS -->
           <div class="struktur-jabatan-label" style="margin-top:24px;">Humas</div>
           <div class="struktur-row-pair">
             <div class="struktur-card">
@@ -1473,7 +1635,6 @@
           <div class="struktur-line"></div>
           <div class="struktur-line-split"></div>
 
-          <!-- 7. KESEHATAN -->
           <div class="struktur-jabatan-label" style="margin-top:24px;">Kesehatan</div>
           <div class="struktur-row-pair">
             <div class="struktur-card">
@@ -1501,7 +1662,6 @@
           <div class="struktur-line"></div>
           <div class="struktur-line-split"></div>
 
-          <!-- 8. DOKUMENTASI -->
           <div class="struktur-jabatan-label" style="margin-top:24px;">Dokumentasi</div>
           <div class="struktur-row-pair">
             <div class="struktur-card">
@@ -1529,7 +1689,6 @@
           <div class="struktur-line"></div>
           <div class="struktur-line-split"></div>
 
-          <!-- 9. PERLENGKAPAN -->
           <div class="struktur-jabatan-label" style="margin-top:24px;">Perlengkapan</div>
           <div class="struktur-row-pair">
             <div class="struktur-card">
@@ -1557,7 +1716,6 @@
           <div class="struktur-line"></div>
           <div class="struktur-line-split"></div>
 
-          <!-- 10. KEAMANAN -->
           <div class="struktur-jabatan-label" style="margin-top:24px;">Keamanan</div>
           <div class="struktur-row-pair">
             <div class="struktur-card">
@@ -1582,8 +1740,6 @@
             </div>
           </div>
 
-
-          <!-- ── ANGGOTA BIASA (foto bareng) ── -->
           <div class="struktur-line"></div>
           <div class="struktur-line-split"></div>
 
@@ -1610,7 +1766,6 @@
               Atau tambahkan file bernama <code style="color:rgba(201,146,42,0.5)">foto_anggota_biasa.jpg</code> ke folder images/
             </p>
           </div>
-
         </div><!-- /struktur-tree -->
 
         <button id="btn-close-struktur2" style="
@@ -1620,11 +1775,9 @@
           font-weight:700; letter-spacing:2px; text-transform:uppercase;
           border:none; border-radius:8px; cursor:pointer;
         ">Tutup</button>
-
-      </div>
-    </div>
-  </div>
-
+      </div><!-- /modal-struktur-body -->
+    </div><!-- /modal-struktur-box -->
+  </div><!-- /modal-struktur -->
 
   <!-- ══ QR CODE ══ -->
   <div class="qr-section">
@@ -1634,10 +1787,10 @@
       <p class="reveal">Scan kode QR di bawah untuk langsung mengunjungi website ALYOSMA</p>
       <div class="reveal" style="display:flex;flex-direction:column;align-items:center;">
         <div class="qr-box">
-          <canvas id="qr-canvas"></canvas>
+          <img id="qr-img" src="" alt="QR Code ALYOSMA" style="width:200px;height:200px;border-radius:6px;display:block;"/>
           <div class="qr-box-label">ALYOSMA · SMK YAPIN Bekasi</div>
         </div>
-        <a id="qr-download" class="qr-download-btn" download="QR-ALYOSMA.png">
+        <a id="qr-download" class="qr-download-btn" href="" download="QR-ALYOSMA.png">
           ⬇ Unduh QR Code
         </a>
       </div>
@@ -1817,8 +1970,6 @@
   </div><!-- /modal -->
 
 
-  <!-- QR Code library -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <script>
     /* ══ MODAL STRUKTUR AMBALAN ══ */
     const modalStruktur   = document.getElementById('modal-struktur');
@@ -1844,50 +1995,40 @@
 
     /* ══ QR CODE GENERATOR ══ */
     document.addEventListener('DOMContentLoaded', () => {
-      // Ambil URL website saat ini (otomatis sesuai domain Netlify)
-      const siteURL = window.location.href.split('#')[0].replace(/\/$/, '');
+      const siteURL = 'https://alyosma.vercel.app';
+      const qrImg = document.getElementById('qr-img');
+      const dlBtn = document.getElementById('qr-download');
 
-      const qrCanvas = document.getElementById('qr-canvas');
-      if (qrCanvas && typeof QRCode !== 'undefined') {
-        // Buat QR ke div sementara lalu salin ke canvas
-        const tempDiv = document.createElement('div');
-        tempDiv.style.display = 'none';
-        document.body.appendChild(tempDiv);
-
-        new QRCode(tempDiv, {
-          text: siteURL,
-          width: 200,
-          height: 200,
-          colorDark: '#3D1A0A',
-          colorLight: '#FFFFFF',
-          correctLevel: QRCode.CorrectLevel.H
-        });
-
-        // Tunggu QR render lalu salin ke canvas utama
-        setTimeout(() => {
-          const qrImg = tempDiv.querySelector('img') || tempDiv.querySelector('canvas');
-          if (qrImg) {
-            const ctx = qrCanvas.getContext('2d');
-            qrCanvas.width = 200;
-            qrCanvas.height = 200;
-            if (qrImg.tagName === 'CANVAS') {
-              ctx.drawImage(qrImg, 0, 0);
-            } else {
-              const img = new Image();
-              img.onload = () => ctx.drawImage(img, 0, 0, 200, 200);
-              img.src = qrImg.src;
-            }
-            // Setup download button
-            setTimeout(() => {
-              const dlBtn = document.getElementById('qr-download');
-              if (dlBtn) dlBtn.href = qrCanvas.toDataURL('image/png');
-            }, 300);
-          }
-          document.body.removeChild(tempDiv);
-        }, 200);
+      if (qrImg) {
+        // Gunakan Google Charts API untuk generate QR - paling reliable
+        const qrURL = 'https://chart.googleapis.com/chart?cht=qr&chs=200x200&chl=' + encodeURIComponent(siteURL) + '&chco=3D1A0A&chf=bg,s,FFFFFF';
+        qrImg.src = qrURL;
+        if (dlBtn) dlBtn.href = qrURL;
       }
     });
   </script>
 
+
+  <script>
+    /* ══ TOGGLE ACCORDION HUT — fungsi global ══ */
+    function toggleHUT() {
+      const panel   = document.getElementById('hut-panel');
+      const trigger = document.getElementById('hut-trigger');
+      if (!panel || !trigger) return;
+      const isOpen = panel.classList.contains('open');
+      if (isOpen) {
+        panel.classList.remove('open');
+        trigger.classList.remove('open');
+        trigger.setAttribute('aria-expanded', 'false');
+      } else {
+        panel.classList.add('open');
+        trigger.classList.add('open');
+        trigger.setAttribute('aria-expanded', 'true');
+        setTimeout(() => {
+          panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 100);
+      }
+    }
+  </script>
 </body>
-</html>
+</html>﻿
